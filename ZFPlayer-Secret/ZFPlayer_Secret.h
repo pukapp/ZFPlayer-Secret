@@ -16,4 +16,7 @@ FOUNDATION_EXPORT const unsigned char ZFPlayer_SecretVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <ZFPlayer_Secret/PublicHeader.h>
 
-
+#import <ZFPlayer_Secret/ZFPlayer.h>
+#import <ZFPlayer_Secret/ZFAVPlayerManager.h>
+#import <ZFPlayer_Secret/ZFPlayerController.h>
+#import <ZFPlayer_Secret/ZFSecretPlayerControlView.h>
