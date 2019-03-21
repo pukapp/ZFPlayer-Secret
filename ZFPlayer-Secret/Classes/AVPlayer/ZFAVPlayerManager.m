@@ -26,11 +26,7 @@
 #import <UIKit/UIKit.h>
 #import "TVideoLoadManager.h"
 #import <AVFoundation/AVFoundation.h>
-#if __has_include(<ZFPlayer/ZFPlayer.h>)
-#import <ZFPlayer/ZFPlayer.h>
-#else
 #import "ZFPlayer_Secret.h"
-#endif
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
 
@@ -270,26 +266,23 @@ static NSString *const kPresentationSize         = @"presentationSize";
 }
 
 - (AVURLAsset *)generateItem:(NSString *)url {
-    if (self.isRetry) {
+    if (self.isRetry) { ///在缓存中
         _asset = [AVURLAsset URLAssetWithURL:self.assetURL options:nil];
-     //   [VideoDownLoader downLoadVideoWithUrl:_assetURL.absoluteString downloadMd5:self.md5];
         self.isRetry = NO;
         self.isNeedLoad = YES;
         return _asset;
     }
-    //TODO:
-//    if ([VideoDownLoader cacheFileExistsWithFileName:url.md5]) {
-//        NSString *filePath = [VideoDownLoader cacheFileWithFileName:url.md5];
-//        NSData *data = [NSData dataWithContentsOfFile:filePath];
-//        if ([self.md5 isEqualToString:[data wr_MD5Hash]]) {
-//            _asset = [AVURLAsset URLAssetWithURL:[NSURL fileURLWithPath:[VideoDownLoader cacheFileWithFileName:url.md5]] options:nil];
-//            self.isNeedLoad = NO;
-//            return _asset;
-//        }
-//    }
-    self.isNeedLoad = YES;
-    _asset = [AVURLAsset URLAssetWithURL:self.assetURL options:nil];
-   // [VideoDownLoader downLoadVideoWithUrl:url downloadMd5:self.md5];
+    NSString * fileName = [url md5];
+    if ( [TVideoFileManager hasFinishedVideoCache:fileName]) { ///在内存中
+        _asset = [AVURLAsset assetWithURL:[TVideoFileManager cacheFileExistsWithName:fileName]];
+        self.isNeedLoad = NO;
+    } else { ///不在内存中，则边加载边下载
+        self.isNeedLoad = YES;
+        _asset = [AVURLAsset URLAssetWithURL:[NSURL URLWithString:[TVideoLoadManager encryptionDownLoadUrl:url]]  options:nil];
+        _downLoadManager = [[TVideoLoadManager alloc] initWithFileName:fileName];
+        [_asset.resourceLoader setDelegate:_downLoadManager queue:dispatch_get_global_queue(0, 0)];
+    }
+
     return _asset;
 }
 

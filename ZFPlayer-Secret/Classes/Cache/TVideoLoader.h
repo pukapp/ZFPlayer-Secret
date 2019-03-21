@@ -9,13 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import "TVideoFileManager.h"
-//#import <AudioToolbox/AudioToolbox.h>
 typedef void (^VideoLoaderProcessBk)(NSUInteger offset,NSData*data);
 typedef void (^VideoLoaderCompleteBk)(NSError* error,NSUInteger offset,NSUInteger length);
 typedef void(^VideoLoaderRespondBk)(NSUInteger length,NSString*meidaType);
-
 @protocol VideoLoaderProtocol <NSObject>
-
+@optional
+- (void)videoLoaderConfigure:(NSMutableURLRequest*)request;
 - (void)videoLoaderProcessOffset:(NSUInteger)offset  data:(NSData*)receiveData;
 - (void)videoLoaderComplete:(NSError*)error;
 - (void)videoLoaderRespond:(NSUInteger)length withMediaType:(NSString*)type;
@@ -40,6 +39,5 @@ typedef void(^VideoLoaderRespondBk)(NSUInteger length,NSString*meidaType);
 
 - (void)start;
 - (void)cancel;
-//- (void)done;
 - (void)videoLoaderSychronizeProcessToConfigure;
 @end

@@ -10,32 +10,27 @@
 #import "TVideoDownOperation.h"
 #import <libkern/OSAtomic.h>
 @interface TVideoDownQueue()
-@property(nonatomic,weak)TVideoDownOperation* currentDownLoadOperation;
-
+@property (nonatomic,weak) TVideoDownOperation* currentDownLoadOperation;
+@property (nonatomic,copy) NSDictionary* httpHeader;
+@property (nonatomic,strong) TVideoFileManager* fileManager;
 @end
 @implementation TVideoDownQueue
 {
     NSOperationQueue* _downQueue;
-//    AVAssetResourceLoadingRequest* _assetResource;
-    TVideoFileManager* _fileManager;
+//    TVideoFileManager* _fileManager;
     NSURL* _requestUrl;
 }
-@synthesize currentDownLoadOperation;
-@synthesize assetResource;
-@synthesize isNetworkError;
 
-- (instancetype)initWithFileManager:(TVideoFileManager *)fileManager WithLoadingRequest:(AVAssetResourceLoadingRequest *)resource loadingUrl:(NSURL*)url
+- (instancetype)initWithFileManager:(TVideoFileManager *)fileManager WithLoadingRequest:(AVAssetResourceLoadingRequest *)resource loadingUrl:(NSURL*)url withHttpHead:(NSDictionary *)httpHead
 {
     self = [super init];
     _downQueue = [[NSOperationQueue alloc]init];
     _downQueue.maxConcurrentOperationCount = 1;
-    _fileManager = fileManager;
+    self.fileManager = fileManager;
     _requestUrl = url;
     self.assetResource = resource;
+     self.httpHeader = httpHead;
     [self addReuqestOperation];
-    
-      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(netWorkChangedNotic:) name:@"networkchanged" object:nil];
-    
     return self;
 }
 
@@ -44,24 +39,24 @@
     NSAssert(request.dataRequest.requestedOffset == 0, @"reloadAssetResource error");
     NSUInteger offset = [self.currentDownLoadOperation requestOffset];
     NSUInteger length = [self.currentDownLoadOperation cacheLength];
-//    NSLog(@"reloadAssetResource currentDownLoadOperation %@ length %ld",self.currentDownLoadOperation,length);
     self.assetResource = request;
-    NSData* temp = [_fileManager readTempFileDataWithOffset:offset length:length];
+    NSData* temp = [self.fileManager readTempFileDataWithOffset:offset length:length];
     [self.assetResource.dataRequest respondWithData:temp];
-}
-
-
-- (void)netWorkChangedNotic:(NSNotification*)notic
-{
-    self.currentDownLoadOperation.netReachable = true;
 }
 
 - (void)addReuqestOperation
 {
-    NSArray* segmentArr = [_fileManager getSegmentsFromFile: NSMakeRange(self.assetResource.dataRequest.currentOffset, self.assetResource.dataRequest.requestedLength-self.assetResource.dataRequest.currentOffset+self.assetResource.dataRequest.requestedOffset)];
+    NSInteger requestLength = 0;
+    if ([self.assetResource respondsToSelector:@selector(requestsAllDataToEndOfResource)] && self.assetResource.dataRequest.requestsAllDataToEndOfResource == YES) {
+        requestLength = [self.fileManager getFileLength] - 1;
+    }else{
+       requestLength = self.assetResource.dataRequest.requestedLength-self.assetResource.dataRequest.currentOffset+self.assetResource.dataRequest.requestedOffset;
+    }
+    
+    NSArray* segmentArr = [self.fileManager getSegmentsFromFile: NSMakeRange(self.assetResource.dataRequest.currentOffset,requestLength) ];
 //    NSLog(@"read segmentArr %@   current offset %ld-%ld",segmentArr,self.assetResource.dataRequest.currentOffset,self.assetResource.dataRequest.requestedOffset+self.assetResource.dataRequest.requestedLength-1);
     
-     __weak TVideoFileManager* wFileManager = _fileManager;
+//     __weak TVideoFileManager* wFileManager = _fileManager;
      __weak typeof (self) wself = self;
     for (NSArray* element  in segmentArr) {
         
@@ -72,8 +67,7 @@
             
             [_downQueue addOperationWithBlock:^{
             
-                if(wself.assetResource.isFinished == true || wself.assetResource.isCancelled == true)
-                {
+                if(wself.assetResource.isFinished == true || wself.assetResource.isCancelled == true){
                       [wself cancelDownLoad];
                      return ;
                 }
@@ -82,19 +76,18 @@
                 NSData* data = nil;
                 
                 int bufSize = 1024000;
-                while (totalLength > (NSUInteger)bufSize) {
+                while (totalLength > bufSize) {
                     if (wself.assetResource.isCancelled || wself.assetResource.isFinished) {
                        [wself cancelDownLoad];
                         return;
                     }
-                    data =  [wFileManager readTempFileDataWithOffset:startInteger length:bufSize];
-//                     NSLog(@"respondWithData from %ld-%ld",startInteger,bufSize);
+                    data =  [wself.fileManager readTempFileDataWithOffset:startInteger length:bufSize];
                     [wself.assetResource.dataRequest respondWithData:data];
                     [NSThread sleepForTimeInterval:0.1];
                      startInteger = startInteger + bufSize;
                     totalLength = totalLength - bufSize;
                 }
-                data =  [wFileManager readTempFileDataWithOffset:startInteger length:totalLength];
+                data =  [wself.fileManager readTempFileDataWithOffset:startInteger length:totalLength];
                 [wself.assetResource.dataRequest respondWithData:data];
                 if ([wself getCurrentOperaton] == 1) {
                          [wself.assetResource finishLoading];
@@ -106,7 +99,8 @@
         {
             TVideoDownOperation* requestOperation = [[TVideoDownOperation alloc]initWithUrl:_requestUrl withRange:NSMakeRange(start.unsignedIntegerValue, end.unsignedIntegerValue - start.unsignedIntegerValue + 1)];
             __weak TVideoDownOperation* wRequestOperation = requestOperation;
-            [requestOperation setOperationStartBk:^{
+            [requestOperation setOperationStartBk:^(NSMutableURLRequest *request) {
+                request.allHTTPHeaderFields = wself.httpHeader;
                  wself.currentDownLoadOperation = wRequestOperation;
             }];
             
@@ -115,14 +109,14 @@
                     wself.isNetworkError = NO;
                      if (wself.assetResource.contentInformationRequest) {
                          wself.assetResource.contentInformationRequest.contentLength = length;
-                         [wFileManager setFileLength:length];
+                         [wself.fileManager setFileLength:length];
                          [wself.assetResource finishLoading];
                      }
             }];
             
             [requestOperation setDownProcessBk:^(NSUInteger offset, NSData *data) {
 
-                [wFileManager writeFileData:offset data:data];
+                [wself.fileManager writeFileData:offset data:data];
                 if(wself.assetResource.isFinished != true && wself.assetResource.isCancelled != true )
                 {
                       [wself.assetResource.dataRequest respondWithData:data];
@@ -137,7 +131,7 @@
             
             [requestOperation setDownCompleteBk:^(NSError *error, NSUInteger offset, NSUInteger length) {
 
-                 [wFileManager saveSegmentData:offset length:length];
+                 [wself.fileManager saveSegmentData:offset length:length];
                 if (error == nil  && wself.assetResource.isFinished != true && wself.assetResource.isCancelled != true && [wself getCurrentOperaton] == 1) {
                     [wself.assetResource finishLoading];
                 }
@@ -145,6 +139,9 @@
                     wself.currentDownLoadOperation = nil;
                 } else {
                   wself.isNetworkError = YES;
+                    if ([wself.delegate respondsToSelector:@selector(loadNetError:)]) {
+                        [wself.delegate loadNetError:wself];
+                    }
                 }
             }];
             [_downQueue addOperation:requestOperation];
@@ -166,6 +163,8 @@
             [_downQueue cancelAllOperations];
             _downQueue = nil;
         }
+        self.fileManager = nil;
+        self.assetResource = nil;
     }
 }
 
@@ -174,7 +173,7 @@
     if (self.currentDownLoadOperation) {
         NSUInteger offset = [self.currentDownLoadOperation requestOffset];
         NSUInteger length = [self.currentDownLoadOperation cacheLength];
-        [_fileManager saveSegmentData:offset length:length];
+        [self.fileManager saveSegmentData:offset length:length];
     }
 }
 
@@ -182,6 +181,5 @@
 {
     [self sychronizeProcessToConfigure];
     [self cancelDownLoad];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end

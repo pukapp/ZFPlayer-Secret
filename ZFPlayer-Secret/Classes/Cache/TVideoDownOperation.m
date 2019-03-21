@@ -8,8 +8,6 @@
 
 #import "TVideoDownOperation.h"
 #import <libkern/OSAtomic.h>
-#import <os/lock.h>
-
 @interface TVideoDownOperation ()
 
 @property (assign, nonatomic, getter = isExecuting) BOOL executing;
@@ -27,7 +25,7 @@
     NSURLSession * _session;              //会话对象
     NSURLSessionDataTask * _task;
     NSURL* _downLoadUrl;
-    os_unfair_lock_t _oslock;
+    OSSpinLock _oslock;
 }
 @synthesize executing = _executing;
 @synthesize finished = _finished;
@@ -42,7 +40,7 @@
     _finished = NO;
     _downLoadUrl = url;
     self.netReachable = true;
-    _oslock = &((OS_UNFAIR_LOCK_INIT));
+     _oslock = OS_SPINLOCK_INIT;
 #if DEBUG
     if (_range.length < 1 ) {
         NSAssert(false, @"video downOperation range error");
@@ -89,30 +87,31 @@
 
 - (void)start
 {
-    os_unfair_lock_lock(_oslock);
+    OSSpinLockLock(&_oslock);
     if (self.isCancelled) {
         self.finished = YES;
         return;
     }
     
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:_downLoadUrl cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
-    
-    if (_range.length != 2) {
+ 
+    if (_startBk) {
+        _startBk(request);
+    }
+//    if (_range.length != 2) {
         NSString* rangeStr = [NSString stringWithFormat:@"bytes=%ld-%ld", _range.location+_cacheLength, _range.length+_range.location-1];
         [request addValue:rangeStr forHTTPHeaderField:@"Range"];
-//         NSLog(@"http setRang %@  operation %@",rangeStr,self);
-    }
+//    }
 
+//     NSLog(@"http setRang %@  ",request.allHTTPHeaderFields);
     NSURLSessionConfiguration* configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     configuration.HTTPMaximumConnectionsPerHost = 6;
     _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     _task = [_session dataTaskWithRequest:request];
     [_task resume];
     
-    if (_startBk) {
-        _startBk();
-    }
-    os_unfair_lock_unlock(_oslock);
+   
+     OSSpinLockUnlock(&_oslock);
 }
 
 
@@ -126,9 +125,9 @@
 
 - (void)cancel {
     
-    os_unfair_lock_lock(_oslock);
+   OSSpinLockLock(&_oslock);
     [self cancelInternal];
-    os_unfair_lock_unlock(_oslock);
+    OSSpinLockUnlock(&_oslock);
 }
 
 
@@ -227,17 +226,17 @@
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
   
 //    NSLog(@"alread down load %@ data from %ld-%ld  request %ld-%ld",self,_range.location,_range.location+_cacheLength-1,_range.location,_range.length-1);
-    if (error.code < 0 && error.code != -999) {
-   
-        if (_completeBk) {
-             _completeBk(error,_range.location,_cacheLength);
-        }
-        [_session finishTasksAndInvalidate]; //startRunLoop 注意顺序 否则 线程循环嵌套 导致内存无法释放
-//        [self startRunLoop];
-        sleep(5);
-        [self start];
-        return;
-    }
+//    if (error.code < 0 && error.code != -999) {
+//   
+//        if (_completeBk) {
+//             _completeBk(error,_range.location,_cacheLength);
+//        }
+//        [_session finishTasksAndInvalidate]; //startRunLoop 注意顺序 否则 线程循环嵌套 导致内存无法释放
+////        [self startRunLoop];
+//        sleep(5);
+//        [self start];
+//        return;
+//    }
     if (_completeBk) {
         _completeBk(nil,_range.location,_cacheLength);
     }

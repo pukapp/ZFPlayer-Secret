@@ -7,23 +7,21 @@
 //
 
 #import "TVideoLoadManager.h"
-#import "TVideoDownQueue.h"
 #import "TVideoFileManager.h"
-#import "TVideoLoader.h"
 #import <libkern/OSAtomic.h>
 #import "TVideoDownOperation.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <os/lock.h>
 @implementation TVideoLoadManager
 {
     NSUInteger _fileLength;
     NSUInteger _cancelLength;
-    TVideoLoader * _downLoad;
     TVideoFileManager* _fileManager;
     NSMutableArray* _requestArr;
-    os_unfair_lock oslock;
+    OSSpinLock oslock ;
     NSData* resourceData;
+    NSDictionary* _httpHeader;
 }
+
 
 
 - (instancetype)initWithFileName:(NSString*)fileName
@@ -31,49 +29,51 @@
     self = [super init];
     _fileManager = [[TVideoFileManager alloc]initWithFileName:fileName];
      _requestArr = [NSMutableArray arrayWithCapacity:0];
-    oslock = (OS_UNFAIR_LOCK_INIT);
+     oslock = OS_SPINLOCK_INIT;
     return self;
 }
 
 + (NSString*)decodeDownLoadUrl:(NSString*)url
 {
-    return [NSString stringWithFormat:@"http://%@",url];
+    return [NSString stringWithFormat:@"http%@",url];
 }
 + (NSString*)encryptionDownLoadUrl:(NSString *)url
 {
     if ([url hasPrefix:@"http"]) {
-        return [url substringFromIndex:7];
-    }else{
-        return url;//[url substringFromIndex:7];
+        return [url substringFromIndex:4];
     }
     return nil;
 }
 
+- (void)cancelDownLoad{
+    OSSpinLockLock(&oslock);
+    for (TVideoDownQueue* temp in _requestArr) {
+        AVAssetResourceLoadingRequest * compare = [temp assetResource];
+        if (compare.isCancelled == NO && compare.isFinished == NO) {
+             [compare finishLoadingWithError:nil];
+        }
+        [temp cancelDownLoad];
+    }
+    [_requestArr removeAllObjects];
+    OSSpinLockUnlock(&oslock);
+}
 
 - (BOOL)netWorkError
 {
+    OSSpinLockLock(&oslock);
     for (TVideoDownQueue* temp in _requestArr) {
         if (temp.isNetworkError == YES) {
+             OSSpinLockUnlock(&oslock);
             return YES;
         }
     }
+     OSSpinLockUnlock(&oslock);
     return NO;
 }
-
-//#if 1
-
+#if 1
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
 {
-//     NSLog(@"loadingRequest %ld-%ld ", loadingRequest.dataRequest.requestedOffset,loadingRequest.dataRequest.requestedLength+loadingRequest.dataRequest.requestedOffset-1);
-    
-//    if (_requestArr.count == 1 && loadingRequest.dataRequest.requestedOffset == 0) {
-//        TVideoDownQueue* first = _requestArr.firstObject;
-//        if (first.assetResource.dataRequest.requestedLength == 2) {
-//            [first reloadAssetResource:loadingRequest];
-//            return YES;
-//        }
-//    }
-    
+//    NSLog(@"loadingRequest %ld-%ld ", loadingRequest.dataRequest.requestedOffset,loadingRequest.dataRequest.requestedLength+loadingRequest.dataRequest.requestedOffset-1);
     [self checkResourceLoader];
     if (loadingRequest.contentInformationRequest) {
         CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)(@"video/mp4"), NULL);
@@ -81,7 +81,7 @@
         loadingRequest.contentInformationRequest.byteRangeAccessSupported = YES;
     }
     
-    os_unfair_lock_lock(&oslock);
+    OSSpinLockLock(&oslock);
     
     if ([_fileManager getFileLength] != 0 )  {
         
@@ -91,82 +91,83 @@
             NSData* data =  [_fileManager readTempFileDataWithOffset:0 length:2];
             [loadingRequest.dataRequest respondWithData:data];
             [loadingRequest finishLoading];
-            os_unfair_lock_unlock(&oslock);
+            OSSpinLockUnlock(&oslock);
             return true;
         }
     }
     
     NSString* downUrl = [TVideoLoadManager decodeDownLoadUrl:loadingRequest.request.URL.absoluteString];
-    TVideoDownQueue* downLoad = [[TVideoDownQueue alloc]initWithFileManager:_fileManager WithLoadingRequest:loadingRequest loadingUrl:[NSURL URLWithString:downUrl]];
+    TVideoDownQueue* downLoad = [[TVideoDownQueue alloc]initWithFileManager:_fileManager WithLoadingRequest:loadingRequest loadingUrl:[NSURL URLWithString:downUrl] withHttpHead:_httpHeader];
+    downLoad.delegate = self;
     [_requestArr addObject:downLoad];
-     os_unfair_lock_unlock(&oslock);
-    
-    return NO;
+     OSSpinLockUnlock(&oslock);
+    return YES;
  }
 
-//#else
-//
-//- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
-//{
-//    NSLog(@"loadingRequest %ld-%ld  toend %d", loadingRequest.dataRequest.requestedOffset,loadingRequest.dataRequest.requestedLength+loadingRequest.dataRequest.requestedOffset-1,loadingRequest.dataRequest.requestsAllDataToEndOfResource);
-//
-//    [self checkResourceLoader];
-//     CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)(@"video/mp4"), NULL);
-//    loadingRequest.contentInformationRequest.contentType = CFBridgingRelease(contentType);
-//    loadingRequest.contentInformationRequest.byteRangeAccessSupported = NO;
-//    //exist video cache
-//    if ([_fileManager getFileLength] != 0 )  {
-//
-//        if (loadingRequest.dataRequest.requestedLength == 2) {
-//
-//            loadingRequest.contentInformationRequest.contentLength = [_fileManager getFileLength];
-//            NSData* data =  [_fileManager readTempFileDataWithOffset:0 length:2];
-//            [loadingRequest.dataRequest respondWithData:data];
-//            [loadingRequest finishLoading];
-//
-//        }
-//        else if(_downLoad &&(loadingRequest.dataRequest.requestedOffset == 0 || loadingRequest.dataRequest.requestedOffset == 2))
-//        {
-//            _downLoad.assetResource = loadingRequest;
-//        }
-//        else
-//        {
-//
-//            if (_downLoad) {
-//                [_downLoad videoLoaderSychronizeProcessToConfigure];
-//                [_downLoad cancel];
-//                _downLoad = nil;
-//            }
-//
-//            os_unfair_lock_lock(&oslock);
-//            NSString* downUrl = [VideoLoadManager decodeDownLoadUrl:loadingRequest.request.URL.absoluteString];
-//            VideoDownQueue* downLoad = [[VideoDownQueue alloc]initWithFileManager:_fileManager WithLoadingRequest:loadingRequest loadingUrl:[NSURL URLWithString:downUrl]];
-//            [_requestArr addObject:downLoad];
-//            os_unfair_lock_unlock (&oslock);
-//
-//        }
-//         return true;
-//    }
-//
-//    if (loadingRequest.dataRequest.requestedOffset == 0 || loadingRequest.dataRequest.requestedOffset == 2) {
-//
-//            NSString* downUrl = [VideoLoadManager decodeDownLoadUrl:loadingRequest.request.URL.absoluteString];
-//            _downLoad = [[VideoLoader alloc]initWithUrl:[NSURL URLWithString:downUrl] withRange:NSMakeRange(loadingRequest.dataRequest.requestedOffset, loadingRequest.dataRequest.requestedLength)];
-//            _downLoad.assetResource = loadingRequest;
-//            _downLoad.fileManager = _fileManager;
-//            [_downLoad start];
-//        return true;
-//    }
-//
-//    return true;
-//}
-//
-//#endif
+
+#else
+
+- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
+{
+    NSLog(@"loadingRequest %ld-%ld  toend %d", loadingRequest.dataRequest.requestedOffset,loadingRequest.dataRequest.requestedLength+loadingRequest.dataRequest.requestedOffset-1,loadingRequest.dataRequest.requestsAllDataToEndOfResource);
+   
+    [self checkResourceLoader];
+     CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)(@"video/mp4"), NULL);
+    loadingRequest.contentInformationRequest.contentType = CFBridgingRelease(contentType);
+    loadingRequest.contentInformationRequest.byteRangeAccessSupported = NO;
+    //exist video cache
+    if ([_fileManager getFileLength] != 0 )  {
+        
+        if (loadingRequest.dataRequest.requestedLength == 2) {
+            
+            loadingRequest.contentInformationRequest.contentLength = [_fileManager getFileLength];
+            NSData* data =  [_fileManager readTempFileDataWithOffset:0 length:2];
+            [loadingRequest.dataRequest respondWithData:data];
+            [loadingRequest finishLoading];
+            
+        }
+        else if(_downLoad &&(loadingRequest.dataRequest.requestedOffset == 0 || loadingRequest.dataRequest.requestedOffset == 2))
+        {
+            _downLoad.assetResource = loadingRequest;
+        }
+        else
+        {
+            
+            if (_downLoad) {
+                [_downLoad videoLoaderSychronizeProcessToConfigure];
+                [_downLoad cancel];
+                _downLoad = nil;
+            }
+
+            OSSpinLockLock(&oslock);
+            NSString* downUrl = [VideoLoadManager decodeDownLoadUrl:loadingRequest.request.URL.absoluteString];
+            VideoDownQueue* downLoad = [[VideoDownQueue alloc]initWithFileManager:_fileManager WithLoadingRequest:loadingRequest loadingUrl:[NSURL URLWithString:downUrl]];
+            [_requestArr addObject:downLoad];
+            OSSpinLockUnlock(&oslock);
+
+        }
+         return true;
+    }
+
+    if (loadingRequest.dataRequest.requestedOffset == 0 || loadingRequest.dataRequest.requestedOffset == 2) {
+        
+            NSString* downUrl = [VideoLoadManager decodeDownLoadUrl:loadingRequest.request.URL.absoluteString];
+            _downLoad = [[VideoLoader alloc]initWithUrl:[NSURL URLWithString:downUrl] withRange:NSMakeRange(loadingRequest.dataRequest.requestedOffset, loadingRequest.dataRequest.requestedLength)];
+            _downLoad.assetResource = loadingRequest;
+            _downLoad.fileManager = _fileManager;
+            [_downLoad start];
+        return true;
+    }
+    
+    return true;
+}
+
+#endif
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
 {
 //    NSLog(@"didCancelLoadingRequest  %ld-%ld",loadingRequest.dataRequest.requestedOffset,loadingRequest.dataRequest.requestedOffset+loadingRequest.dataRequest.requestedLength-1);
-    os_unfair_lock_lock(&oslock);
+    OSSpinLockLock(&oslock);
         NSMutableArray* removeAr = [NSMutableArray arrayWithCapacity:0];
         for (TVideoDownQueue* temp in _requestArr) {
             AVAssetResourceLoadingRequest * compare = [temp assetResource] ;
@@ -176,51 +177,44 @@
             }
         }
         [_requestArr removeObjectsInArray:removeAr];
-    os_unfair_lock_unlock(&oslock);
+    OSSpinLockUnlock(&oslock);
 }
 
 
 - (void)checkResourceLoader
 {
-    os_unfair_lock_lock(&oslock);
+    OSSpinLockLock(&oslock);
     NSMutableArray* removeAr = [NSMutableArray arrayWithCapacity:0];
     for (TVideoDownQueue* temp in _requestArr) {
-        
         AVAssetResourceLoadingRequest * compare = [temp assetResource] ;
-        
-        [temp cancelDownLoad];
-        [temp sychronizeProcessToConfigure];
         if (compare.isCancelled || compare.isFinished) {
-            
+             [removeAr addObject:temp];
+            [temp cancelDownLoad];
+            [temp sychronizeProcessToConfigure];
         } else {
-            [compare finishLoadingWithError:nil];
-        }        
-        [removeAr addObject:temp];
+//            [compare finishLoadingWithError:nil];
+        }
     }
     [_requestArr removeObjectsInArray:removeAr];
-    os_unfair_lock_unlock(&oslock);
+    OSSpinLockUnlock(&oslock);
 
 }
 
-- (void)networkReachable
-{
-     [[NSNotificationCenter defaultCenter] postNotificationName:@"networkchanged" object:nil];
+
+- (void)setHTTPHeaderField:(NSDictionary *)header{
+    _httpHeader = header;
+}
+
+#pragma mark -DownloadQueue delegate
+
+- (void)loadNetError:(TVideoDownQueue *)downQueue{
+    if ([self.delegate respondsToSelector:@selector(requestNetError)]) {
+        [self.delegate requestNetError];
+    }
 }
 
 - (void)dealloc
 {
-}
-
-- (void)videoLoaderComplete:(NSError *)error {
-    
-}
-
-- (void)videoLoaderProcessOffset:(NSUInteger)offset data:(NSData *)receiveData {
-    
-}
-
-- (void)videoLoaderRespond:(NSUInteger)length withMediaType:(NSString *)type {
-    
 }
 
 @end

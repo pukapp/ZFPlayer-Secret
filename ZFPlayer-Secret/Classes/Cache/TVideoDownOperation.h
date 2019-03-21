@@ -8,8 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
-#import "TVideoLoader.h"
-typedef void (^VideoOperationStartBk)(void);
+typedef void (^VideoOperationStartBk)(NSMutableURLRequest* request);
+typedef void (^VideoLoaderProcessBk)(NSUInteger offset,NSData*data);
+typedef void (^VideoLoaderCompleteBk)(NSError* error,NSUInteger offset,NSUInteger length);
+typedef void(^VideoLoaderRespondBk)(NSUInteger length,NSString*meidaType);
+
 @interface TVideoDownOperation : NSOperation<NSURLSessionDataDelegate>
 @property (assign,nonatomic) BOOL netReachable;
 - (instancetype)initWithUrl:(NSURL*)url withRange:(NSRange)range;

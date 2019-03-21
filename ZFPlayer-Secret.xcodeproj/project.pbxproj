@@ -9,6 +9,18 @@
 /* Begin PBXBuildFile section */
 		73337D3622435021009C9798 /* ZFSecretPlayerControlView.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A9922433BEE002E5B3B /* ZFSecretPlayerControlView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		73337D3722437105009C9798 /* ZFPlayerControlView.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A8C22433BEE002E5B3B /* ZFPlayerControlView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		73337D4822439E68009C9798 /* TVideoFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 73337D3E22439E67009C9798 /* TVideoFileManager.m */; };
+		73337D4922439E68009C9798 /* TVideoDownQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 73337D3F22439E67009C9798 /* TVideoDownQueue.m */; };
+		73337D4A22439E68009C9798 /* TVideoDownQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 73337D4022439E67009C9798 /* TVideoDownQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		73337D4B22439E68009C9798 /* TVideoLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 73337D4122439E67009C9798 /* TVideoLoader.m */; };
+		73337D4C22439E68009C9798 /* TVideoFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 73337D4222439E67009C9798 /* TVideoFileManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		73337D4D22439E68009C9798 /* TVideoLoadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 73337D4322439E67009C9798 /* TVideoLoadManager.m */; };
+		73337D4E22439E68009C9798 /* TVideoLoadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 73337D4422439E67009C9798 /* TVideoLoadManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		73337D4F22439E68009C9798 /* TVideoDownOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 73337D4522439E67009C9798 /* TVideoDownOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		73337D5022439E68009C9798 /* TVideoDownOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 73337D4622439E67009C9798 /* TVideoDownOperation.m */; };
+		73337D5122439E68009C9798 /* TVideoLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 73337D4722439E67009C9798 /* TVideoLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		73337D542243A5DC009C9798 /* NSString+md5.m in Sources */ = {isa = PBXBuildFile; fileRef = 73337D522243A5DB009C9798 /* NSString+md5.m */; };
+		73337D552243A5DC009C9798 /* NSString+md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 73337D532243A5DC009C9798 /* NSString+md5.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2A5122433BBE002E5B3B /* ZFPlayer_Secret.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A4F22433BBE002E5B3B /* ZFPlayer_Secret.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2AA822433BEE002E5B3B /* ZFPlayerNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A5922433BEE002E5B3B /* ZFPlayerNotification.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2AA922433BEE002E5B3B /* ZFPlayerGestureControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A5A22433BEE002E5B3B /* ZFPlayerGestureControl.m */; };
@@ -35,17 +47,6 @@
 		734A2ABF22433BEE002E5B3B /* ZFReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7022433BEE002E5B3B /* ZFReachabilityManager.m */; };
 		734A2AC022433BEE002E5B3B /* ZFDouYinControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7122433BEE002E5B3B /* ZFDouYinControlView.m */; };
 		734A2AC122433BEE002E5B3B /* UIViewController+ZFPlayerRotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7222433BEE002E5B3B /* UIViewController+ZFPlayerRotation.m */; };
-		734A2AC222433BEF002E5B3B /* TVideoLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7422433BEE002E5B3B /* TVideoLoader.m */; };
-		734A2AC322433BEF002E5B3B /* TVideoLoadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7522433BEE002E5B3B /* TVideoLoadManager.m */; };
-		734A2AC422433BEF002E5B3B /* TVideoDownQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7622433BEE002E5B3B /* TVideoDownQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		734A2AC522433BEF002E5B3B /* TVideoFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7722433BEE002E5B3B /* TVideoFileManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		734A2AC722433BEF002E5B3B /* TVideoDownOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7922433BEE002E5B3B /* TVideoDownOperation.m */; };
-		734A2AC822433BEF002E5B3B /* TVideoLoadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7A22433BEE002E5B3B /* TVideoLoadManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		734A2AC922433BEF002E5B3B /* TVideoLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7B22433BEE002E5B3B /* TVideoLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		734A2ACA22433BEF002E5B3B /* TVideoFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7C22433BEE002E5B3B /* TVideoFileManager.m */; };
-		734A2ACB22433BEF002E5B3B /* TVideoDownQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7D22433BEE002E5B3B /* TVideoDownQueue.m */; };
-		734A2ACD22433BEF002E5B3B /* VideoDownLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7F22433BEE002E5B3B /* VideoDownLoader.swift */; };
-		734A2ACE22433BEF002E5B3B /* TVideoDownOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A8022433BEE002E5B3B /* TVideoDownOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2ACF22433BEF002E5B3B /* ZFIJKPlayerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A8222433BEE002E5B3B /* ZFIJKPlayerManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2AD022433BEF002E5B3B /* ZFIJKPlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A8322433BEE002E5B3B /* ZFIJKPlayerManager.m */; };
 		734A2AD122433BEF002E5B3B /* ZFAVPlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A8522433BEE002E5B3B /* ZFAVPlayerManager.m */; };
@@ -82,6 +83,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		73337D3E22439E67009C9798 /* TVideoFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoFileManager.m; sourceTree = "<group>"; };
+		73337D3F22439E67009C9798 /* TVideoDownQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoDownQueue.m; sourceTree = "<group>"; };
+		73337D4022439E67009C9798 /* TVideoDownQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoDownQueue.h; sourceTree = "<group>"; };
+		73337D4122439E67009C9798 /* TVideoLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoLoader.m; sourceTree = "<group>"; };
+		73337D4222439E67009C9798 /* TVideoFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoFileManager.h; sourceTree = "<group>"; };
+		73337D4322439E67009C9798 /* TVideoLoadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoLoadManager.m; sourceTree = "<group>"; };
+		73337D4422439E67009C9798 /* TVideoLoadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoLoadManager.h; sourceTree = "<group>"; };
+		73337D4522439E67009C9798 /* TVideoDownOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoDownOperation.h; sourceTree = "<group>"; };
+		73337D4622439E67009C9798 /* TVideoDownOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoDownOperation.m; sourceTree = "<group>"; };
+		73337D4722439E67009C9798 /* TVideoLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoLoader.h; sourceTree = "<group>"; };
+		73337D522243A5DB009C9798 /* NSString+md5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+md5.m"; sourceTree = "<group>"; };
+		73337D532243A5DC009C9798 /* NSString+md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+md5.h"; sourceTree = "<group>"; };
 		734A2A4C22433BBE002E5B3B /* ZFPlayer_Secret.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZFPlayer_Secret.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		734A2A4F22433BBE002E5B3B /* ZFPlayer_Secret.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZFPlayer_Secret.h; sourceTree = "<group>"; };
 		734A2A5022433BBE002E5B3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -110,17 +123,6 @@
 		734A2A7022433BEE002E5B3B /* ZFReachabilityManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFReachabilityManager.m; sourceTree = "<group>"; };
 		734A2A7122433BEE002E5B3B /* ZFDouYinControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFDouYinControlView.m; sourceTree = "<group>"; };
 		734A2A7222433BEE002E5B3B /* UIViewController+ZFPlayerRotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+ZFPlayerRotation.m"; sourceTree = "<group>"; };
-		734A2A7422433BEE002E5B3B /* TVideoLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoLoader.m; sourceTree = "<group>"; };
-		734A2A7522433BEE002E5B3B /* TVideoLoadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoLoadManager.m; sourceTree = "<group>"; };
-		734A2A7622433BEE002E5B3B /* TVideoDownQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoDownQueue.h; sourceTree = "<group>"; };
-		734A2A7722433BEE002E5B3B /* TVideoFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoFileManager.h; sourceTree = "<group>"; };
-		734A2A7922433BEE002E5B3B /* TVideoDownOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoDownOperation.m; sourceTree = "<group>"; };
-		734A2A7A22433BEE002E5B3B /* TVideoLoadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoLoadManager.h; sourceTree = "<group>"; };
-		734A2A7B22433BEE002E5B3B /* TVideoLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoLoader.h; sourceTree = "<group>"; };
-		734A2A7C22433BEE002E5B3B /* TVideoFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoFileManager.m; sourceTree = "<group>"; };
-		734A2A7D22433BEE002E5B3B /* TVideoDownQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoDownQueue.m; sourceTree = "<group>"; };
-		734A2A7F22433BEE002E5B3B /* VideoDownLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDownLoader.swift; sourceTree = "<group>"; };
-		734A2A8022433BEE002E5B3B /* TVideoDownOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoDownOperation.h; sourceTree = "<group>"; };
 		734A2A8222433BEE002E5B3B /* ZFIJKPlayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFIJKPlayerManager.h; sourceTree = "<group>"; };
 		734A2A8322433BEE002E5B3B /* ZFIJKPlayerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFIJKPlayerManager.m; sourceTree = "<group>"; };
 		734A2A8522433BEE002E5B3B /* ZFAVPlayerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFAVPlayerManager.m; sourceTree = "<group>"; };
@@ -243,17 +245,18 @@
 		734A2A7322433BEE002E5B3B /* Cache */ = {
 			isa = PBXGroup;
 			children = (
-				734A2A7422433BEE002E5B3B /* TVideoLoader.m */,
-				734A2A7522433BEE002E5B3B /* TVideoLoadManager.m */,
-				734A2A7622433BEE002E5B3B /* TVideoDownQueue.h */,
-				734A2A7722433BEE002E5B3B /* TVideoFileManager.h */,
-				734A2A7922433BEE002E5B3B /* TVideoDownOperation.m */,
-				734A2A7A22433BEE002E5B3B /* TVideoLoadManager.h */,
-				734A2A7B22433BEE002E5B3B /* TVideoLoader.h */,
-				734A2A7C22433BEE002E5B3B /* TVideoFileManager.m */,
-				734A2A7D22433BEE002E5B3B /* TVideoDownQueue.m */,
-				734A2A7F22433BEE002E5B3B /* VideoDownLoader.swift */,
-				734A2A8022433BEE002E5B3B /* TVideoDownOperation.h */,
+				73337D532243A5DC009C9798 /* NSString+md5.h */,
+				73337D522243A5DB009C9798 /* NSString+md5.m */,
+				73337D4522439E67009C9798 /* TVideoDownOperation.h */,
+				73337D4622439E67009C9798 /* TVideoDownOperation.m */,
+				73337D4022439E67009C9798 /* TVideoDownQueue.h */,
+				73337D3F22439E67009C9798 /* TVideoDownQueue.m */,
+				73337D4222439E67009C9798 /* TVideoFileManager.h */,
+				73337D3E22439E67009C9798 /* TVideoFileManager.m */,
+				73337D4722439E67009C9798 /* TVideoLoader.h */,
+				73337D4122439E67009C9798 /* TVideoLoader.m */,
+				73337D4422439E67009C9798 /* TVideoLoadManager.h */,
+				73337D4322439E67009C9798 /* TVideoLoadManager.m */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -342,27 +345,28 @@
 				734A2AB122433BEE002E5B3B /* ZFReachabilityManager.h in Headers */,
 				734A2ABE22433BEE002E5B3B /* UIScrollView+ZFPlayer.h in Headers */,
 				734A2AB322433BEE002E5B3B /* ZFDouYinControlView.h in Headers */,
-				734A2ACE22433BEF002E5B3B /* TVideoDownOperation.h in Headers */,
 				734A2AA822433BEE002E5B3B /* ZFPlayerNotification.h in Headers */,
-				734A2AC522433BEF002E5B3B /* TVideoFileManager.h in Headers */,
 				734A2ADB22433BEF002E5B3B /* ZFLoadingView.h in Headers */,
 				734A2AAB22433BEE002E5B3B /* ZFFloatView.h in Headers */,
-				734A2AC922433BEF002E5B3B /* TVideoLoader.h in Headers */,
 				734A2AEC22433BEF002E5B3B /* ZFSecretPortraitControlView.h in Headers */,
 				734A2ADE22433BEF002E5B3B /* UIImageView+ZFCache.h in Headers */,
 				734A2AEE22433BEF002E5B3B /* ZFNetworkSpeedMonitor.h in Headers */,
 				734A2AD822433BEF002E5B3B /* ZFSliderView.h in Headers */,
 				734A2AEA22433BEF002E5B3B /* ZFVolumeBrightnessView.h in Headers */,
 				734A2AF122433BEF002E5B3B /* KSMediaPlayerManager.h in Headers */,
-				734A2AC822433BEF002E5B3B /* TVideoLoadManager.h in Headers */,
 				734A2ADA22433BEF002E5B3B /* ZFSpeedLoadingView.h in Headers */,
 				734A2AD622433BEF002E5B3B /* ZFSmallFloatControlView.h in Headers */,
 				734A2AE022433BEF002E5B3B /* ZFPortraitControlView.h in Headers */,
+				73337D4C22439E68009C9798 /* TVideoFileManager.h in Headers */,
+				73337D5122439E68009C9798 /* TVideoLoader.h in Headers */,
+				73337D4A22439E68009C9798 /* TVideoDownQueue.h in Headers */,
+				73337D4E22439E68009C9798 /* TVideoLoadManager.h in Headers */,
+				73337D4F22439E68009C9798 /* TVideoDownOperation.h in Headers */,
 				734A2ACF22433BEF002E5B3B /* ZFIJKPlayerManager.h in Headers */,
-				734A2AC422433BEF002E5B3B /* TVideoDownQueue.h in Headers */,
 				734A2AE222433BEF002E5B3B /* UIView+ZFFrame.h in Headers */,
 				734A2AEF22433BEF002E5B3B /* ZFLandScapeControlView.h in Headers */,
 				734A2AE322433BEF002E5B3B /* ZFUtilities.h in Headers */,
+				73337D552243A5DC009C9798 /* NSString+md5.h in Headers */,
 				73337D3722437105009C9798 /* ZFPlayerControlView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -439,10 +443,10 @@
 				734A2AC022433BEE002E5B3B /* ZFDouYinControlView.m in Sources */,
 				734A2AD322433BEF002E5B3B /* ZFSecretPlayerControlView.m in Sources */,
 				734A2AAA22433BEE002E5B3B /* ZFPlayerController.m in Sources */,
+				73337D5022439E68009C9798 /* TVideoDownOperation.m in Sources */,
 				734A2AE822433BEF002E5B3B /* ZFLoadingView.m in Sources */,
 				734A2ABA22433BEE002E5B3B /* ZFPlayerView.m in Sources */,
-				734A2AC722433BEF002E5B3B /* TVideoDownOperation.m in Sources */,
-				734A2ACA22433BEF002E5B3B /* TVideoFileManager.m in Sources */,
+				73337D542243A5DC009C9798 /* NSString+md5.m in Sources */,
 				734A2AF022433BEF002E5B3B /* KSMediaPlayerManager.m in Sources */,
 				734A2AED22433BEF002E5B3B /* UIImageView+ZFCache.m in Sources */,
 				734A2ADD22433BEF002E5B3B /* ZFNetworkSpeedMonitor.m in Sources */,
@@ -452,24 +456,24 @@
 				734A2AE722433BEF002E5B3B /* ZFSmallFloatControlView.m in Sources */,
 				734A2AE922433BEF002E5B3B /* ZFSpeedLoadingView.m in Sources */,
 				734A2AD522433BEF002E5B3B /* UIView+ZFFrame.m in Sources */,
-				734A2AC222433BEF002E5B3B /* TVideoLoader.m in Sources */,
 				734A2AD022433BEF002E5B3B /* ZFIJKPlayerManager.m in Sources */,
 				734A2ABF22433BEE002E5B3B /* ZFReachabilityManager.m in Sources */,
 				734A2AAD22433BEE002E5B3B /* ZFOrientationObserver.m in Sources */,
 				734A2AC122433BEE002E5B3B /* UIViewController+ZFPlayerRotation.m in Sources */,
 				734A2AE622433BEF002E5B3B /* ZFPlayerControlView.m in Sources */,
 				734A2AEB22433BEF002E5B3B /* ZFPortraitControlView.m in Sources */,
+				73337D4922439E68009C9798 /* TVideoDownQueue.m in Sources */,
+				73337D4B22439E68009C9798 /* TVideoLoader.m in Sources */,
 				734A2AD422433BEF002E5B3B /* ZFUtilities.m in Sources */,
 				734A2AA922433BEE002E5B3B /* ZFPlayerGestureControl.m in Sources */,
-				734A2ACB22433BEF002E5B3B /* TVideoDownQueue.m in Sources */,
-				734A2AC322433BEF002E5B3B /* TVideoLoadManager.m in Sources */,
 				734A2AE522433BEF002E5B3B /* ZFSliderView.m in Sources */,
 				734A2AD922433BEF002E5B3B /* ZFVolumeBrightnessView.m in Sources */,
-				734A2ACD22433BEF002E5B3B /* VideoDownLoader.swift in Sources */,
 				734A2ADC22433BEF002E5B3B /* ZFLandScapeControlView.m in Sources */,
+				73337D4822439E68009C9798 /* TVideoFileManager.m in Sources */,
 				734A2AB722433BEE002E5B3B /* ZFFloatView.m in Sources */,
 				734A2AB622433BEE002E5B3B /* ZFPlayerNotification.m in Sources */,
 				734A2ABD22433BEE002E5B3B /* ZFKVOController.m in Sources */,
+				73337D4D22439E68009C9798 /* TVideoLoadManager.m in Sources */,
 				734A2ADF22433BEF002E5B3B /* ZFSecretPortraitControlView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

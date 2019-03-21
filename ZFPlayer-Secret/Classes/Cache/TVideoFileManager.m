@@ -9,8 +9,6 @@
 #import "TVideoFileManager.h"
 #import <libkern/OSAtomic.h>
 #import "pthread.h"
-#import <os/lock.h>
-
 static NSString* VideoCachePath = nil;
 @implementation TVideoFileManager
 {
@@ -19,14 +17,14 @@ static NSString* VideoCachePath = nil;
      NSString* _fileName;
      NSUInteger _fileLength;
     NSMutableArray* _segmentArr;
-    __block  os_unfair_lock oslock;
+    __block  OSSpinLock oslock;
 }
  pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
 - (instancetype)initWithFileName:(NSString*)fileName
 {
     self = [super init];
     _fileName = fileName;
-     oslock = OS_UNFAIR_LOCK_INIT;
+     oslock = OS_SPINLOCK_INIT;
     
    NSString * path = [TVideoFileManager creatCacheDirectory];
 //    NSLog(@"document path %@",path);
@@ -35,7 +33,7 @@ static NSString* VideoCachePath = nil;
     BOOL creatError = [self createTempFile:videoPath];
 #if DEBUG
     if (creatError == false) {
-        NSAssert(false, @"creat vide file error");
+        NSAssert(false, @"creat video file error");
     }
 #endif
     
@@ -53,11 +51,10 @@ static NSString* VideoCachePath = nil;
 
 - (void)saveSegmentToPlist
 {
-    //TODO:
-    //NSString * path = VideoDownLoader.cacheVideoPath;
-//    NSString* segmentPath = [NSString stringWithFormat:@"%@/%@.plist",path,_fileName];
-//    NSDictionary* dic = @{@"fileLength":@(_fileLength), @"fileArr":_segmentArr};
-//    [dic writeToFile:segmentPath atomically:YES];
+    NSString * path = [TVideoFileManager cacheFolderPath];
+    NSString* segmentPath = [NSString stringWithFormat:@"%@/%@.plist",path,_fileName];
+    NSDictionary* dic = @{@"fileLength":@(_fileLength), @"fileArr":_segmentArr};
+    [dic writeToFile:segmentPath atomically:YES];
 }
 
 - (void)setFileLength:(NSUInteger)length
@@ -138,35 +135,35 @@ static NSString* VideoCachePath = nil;
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         
-        os_unfair_lock_lock(&self->oslock);
+        OSSpinLockLock(&oslock);
         
-        if (self->_segmentArr.count == 0) {
+        if (_segmentArr.count == 0) {
             
             NSArray* insertArr = @[start,end];
-            [self->_segmentArr addObject:insertArr];
+            [_segmentArr addObject:insertArr];
             [self saveSegmentToPlist];
-            os_unfair_lock_unlock(&self->oslock);
+            OSSpinLockUnlock(&oslock);
             return ;
         }
         
         //这里是 对区间段start－1 、end ＋1 ，进行边界融合
         NSUInteger searchStart =  start.unsignedIntegerValue==0 ? 0 : start.unsignedIntegerValue-1;
-        NSUInteger searchEnd = end.unsignedIntegerValue ==self->_fileLength-1?self->_fileLength-1: end.unsignedIntegerValue+1;
+        NSUInteger searchEnd = end.unsignedIntegerValue ==_fileLength-1?_fileLength-1: end.unsignedIntegerValue+1;
         
-        float startIndex = [self searchSemgentIndex:searchStart withArr:self->_segmentArr];
-        float endIndex = [self searchSemgentIndex:searchEnd withArr:self->_segmentArr];
+        float startIndex = [self searchSemgentIndex:searchStart withArr:_segmentArr];
+        float endIndex = [self searchSemgentIndex:searchEnd withArr:_segmentArr];
         
         if (startIndex == endIndex) {  // 有两种情况 一个是在同一区间段 ，一个是在空白区域 ,不涉及跨区域
             
             NSArray* insertArr = @[start,end];
             if (startIndex<0) {
                 startIndex = 0;
-                [self->_segmentArr insertObject:insertArr atIndex:0];
+                [_segmentArr insertObject:insertArr atIndex:0];
             }
             else
             {
                 if ( [self hasDecimal:startIndex]) {  // 没有小数部分说明 这个区间段处于别的包含中 不需要更新
-                    [self->_segmentArr insertObject:insertArr atIndex:startIndex+0.5];
+                    [_segmentArr insertObject:insertArr atIndex:startIndex+0.5];
                 }
             }
         }
@@ -182,7 +179,7 @@ static NSString* VideoCachePath = nil;
             else
             {
                 int index = startIndex;
-                NSArray* temp = self->_segmentArr[index];
+                NSArray* temp = _segmentArr[index];
                 NSNumber* s = temp[0];
                 insertFileStart = s.unsignedIntegerValue;
             }
@@ -194,7 +191,7 @@ static NSString* VideoCachePath = nil;
             else
             {
                 int index = endIndex;
-                NSArray* temp = self->_segmentArr[index];
+                NSArray* temp = _segmentArr[index];
                 NSNumber* s = temp[1];
                 insertFileEnd = s.unsignedIntegerValue;
             }
@@ -203,13 +200,13 @@ static NSString* VideoCachePath = nil;
             
             NSMutableArray* removeArr = [NSMutableArray arrayWithCapacity:0];
             for (int i = startIndex ;  i <= endIndex ;i++) {
-                [removeArr addObject:self->_segmentArr[i]];
+                [removeArr addObject:_segmentArr[i]];
             }
-            [self->_segmentArr removeObjectsInArray:removeArr];
-            [self->_segmentArr insertObject:insertArr atIndex:startIndex];
+            [_segmentArr removeObjectsInArray:removeArr];
+            [_segmentArr insertObject:insertArr atIndex:startIndex];
         }
         [self saveSegmentToPlist];
-        os_unfair_lock_unlock(&self->oslock);
+        OSSpinLockUnlock(&oslock);
     });
 }
 
@@ -228,7 +225,7 @@ static NSString* VideoCachePath = nil;
 - (float)searchSemgentIndex:(NSUInteger)fileIndex withArr:(NSArray*)segmentArr
 {
     float searchIndex = 0;
-    for (unsigned long index = 0; index<self->_segmentArr.count; index++ ) {
+    for (int index = 0; index<segmentArr.count; index++ ) {
         
         NSArray* currentSegment  = segmentArr[index];
         NSNumber* temp_start = currentSegment[0];
@@ -259,10 +256,10 @@ static NSString* VideoCachePath = nil;
 {
     NSNumber* start = [NSNumber numberWithUnsignedInteger:range.location];
     NSNumber* end = [NSNumber numberWithUnsignedInteger:range.location+range.length-1];
-    os_unfair_lock_lock(&oslock);
+    OSSpinLockLock(&oslock);
     
     if (_segmentArr.count == 0) {
-        os_unfair_lock_unlock(&oslock);
+        OSSpinLockUnlock(&oslock);
         return @[[self creatReadSegmentArr:start end:end isSave:NO]];
     }
     
@@ -270,7 +267,7 @@ static NSString* VideoCachePath = nil;
     float endIndex = [self searchSemgentIndex:end.unsignedIntegerValue withArr:_segmentArr];
     
     if (startIndex == endIndex) {  // 有两种情况 一个是在同一区间段 ，一个是在空白区域 ,不涉及跨区域
-        os_unfair_lock_unlock(&oslock);
+        OSSpinLockUnlock(&oslock);
         if ([self hasDecimal:startIndex]) {
             
             return @[[self creatReadSegmentArr:start end:end isSave:NO]];
@@ -342,7 +339,7 @@ static NSString* VideoCachePath = nil;
             [newSegmengArr replaceObjectAtIndex:newSegmengArr.count-1 withObject:replaceArr];
             
         }
-        os_unfair_lock_unlock(&oslock);
+        OSSpinLockUnlock(&oslock);
         return newSegmengArr;
     }
 }
@@ -377,6 +374,39 @@ static NSString* VideoCachePath = nil;
     return cacheFolderPath;
 }
 
+
++ (NSURL *)cacheFileExistsWithName:(NSString *)fileName {
+    
+    NSFileManager * manager = [NSFileManager defaultManager];
+    NSString * cacheFolderPath = [TVideoFileManager cacheFolderPath];
+     NSString* videoPath = [NSString stringWithFormat:@"%@/%@.mp4",cacheFolderPath,fileName];
+    if ([manager fileExistsAtPath:videoPath] == NO) {
+        return nil;
+    }
+    NSURL *url = [[manager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *path = [url URLByAppendingPathComponent:[NSString stringWithFormat:@"Caches/video_cache/%@.mp4",fileName]];
+    return path;
+}
+
+
++ (BOOL)hasFinishedVideoCache:(NSString *)fileName{
+    NSString * path =  [TVideoFileManager cacheFolderPath];
+    NSString* segmentPath = [NSString stringWithFormat:@"%@/%@.plist",path,fileName];
+    NSDictionary * dic = [NSDictionary dictionaryWithContentsOfFile:segmentPath];
+    if (dic) {
+        NSArray* segments = dic[@"fileArr"];
+        if (segments.count == 1) {
+            NSNumber* length = dic[@"fileLength"];
+            NSUInteger fileLength = [length unsignedIntegerValue];
+            NSArray* seg = segments.firstObject;
+            if ([seg[0] unsignedIntegerValue] == 0 && [seg[1] unsignedIntegerValue] + 1 == fileLength) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
 + (BOOL)clearCache {
     NSFileManager * manager = [NSFileManager defaultManager];
     return [manager removeItemAtPath:[TVideoFileManager cacheFolderPath] error:nil];
@@ -395,24 +425,9 @@ static NSString* VideoCachePath = nil;
     NSArray *allCachePaths =  NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
                                                                   NSUserDomainMask, YES);
     NSString* cache = [[allCachePaths objectAtIndex:0] stringByAppendingPathComponent:@"video_cache"];
+    VideoCachePath = cache;
     return cache;
-    //    return [[NSHomeDirectory( ) stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"VideoCaches"];
-}
-
-+ (BOOL)clearCacheFileWithName:(NSString *)fileName {
-    NSFileManager * manager = [NSFileManager defaultManager];
-    NSString * cacheFolderPath = [TVideoFileManager cacheFolderPath];
-    NSString* videoPath = [NSString stringWithFormat:@"%@/%@.mp4",cacheFolderPath,fileName];
-    if ([manager fileExistsAtPath:videoPath] == NO) {
-        return NO;
-    }
-    NSURL *url = [[manager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
-    NSURL *path = [url URLByAppendingPathComponent:[NSString stringWithFormat:@"Caches/video_cache/%@.mp4",fileName]];
-    BOOL issuc = [manager removeItemAtURL:path error:nil];
-    if (issuc) {
-        return YES;
-    }
-    return NO;
+//    return [[NSHomeDirectory( ) stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"VideoCaches"];
 }
 
 @end
