@@ -29,12 +29,11 @@
 #if __has_include(<ZFPlayer/ZFPlayer.h>)
 #import <ZFPlayer/ZFPlayer.h>
 #else
-#import "ZFPlayer.h"
+#import "ZFPlayer_Secret.h"
 #endif
 #import "NSString+md5.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
-#import "Secret-Swift.h"
 
 /*!
  *  Refresh interval for timed observations of AVPlayer
@@ -190,9 +189,9 @@ static NSString *const kPresentationSize         = @"presentationSize";
 }
 
 - (void)replay {
-    @weakify(self)
+    @zf_weakify(self)
     [self seekToTime:0 completionHandler:^(BOOL finished) {
-        @strongify(self)
+        @zf_strongify(self)
         [self play];
     }];
 }
@@ -274,23 +273,24 @@ static NSString *const kPresentationSize         = @"presentationSize";
 - (AVURLAsset *)generateItem:(NSString *)url {
     if (self.isRetry) {
         _asset = [AVURLAsset URLAssetWithURL:self.assetURL options:nil];
-        [VideoDownLoader downLoadVideoWithUrl:_assetURL.absoluteString downloadMd5:self.md5];
+     //   [VideoDownLoader downLoadVideoWithUrl:_assetURL.absoluteString downloadMd5:self.md5];
         self.isRetry = NO;
         self.isNeedLoad = YES;
         return _asset;
     }
-    if ([VideoDownLoader cacheFileExistsWithFileName:url.md5]) {
-        NSString *filePath = [VideoDownLoader cacheFileWithFileName:url.md5];
-        NSData *data = [NSData dataWithContentsOfFile:filePath];
-        if ([self.md5 isEqualToString:[data wr_MD5Hash]]) {
-            _asset = [AVURLAsset URLAssetWithURL:[NSURL fileURLWithPath:[VideoDownLoader cacheFileWithFileName:url.md5]] options:nil];
-            self.isNeedLoad = NO;
-            return _asset;
-        }
-    }
+    //TODO:
+//    if ([VideoDownLoader cacheFileExistsWithFileName:url.md5]) {
+//        NSString *filePath = [VideoDownLoader cacheFileWithFileName:url.md5];
+//        NSData *data = [NSData dataWithContentsOfFile:filePath];
+//        if ([self.md5 isEqualToString:[data wr_MD5Hash]]) {
+//            _asset = [AVURLAsset URLAssetWithURL:[NSURL fileURLWithPath:[VideoDownLoader cacheFileWithFileName:url.md5]] options:nil];
+//            self.isNeedLoad = NO;
+//            return _asset;
+//        }
+//    }
     self.isNeedLoad = YES;
     _asset = [AVURLAsset URLAssetWithURL:self.assetURL options:nil];
-    [VideoDownLoader downLoadVideoWithUrl:url downloadMd5:self.md5];
+   // [VideoDownLoader downLoadVideoWithUrl:url downloadMd5:self.md5];
     return _asset;
 }
 
@@ -352,9 +352,9 @@ static NSString *const kPresentationSize         = @"presentationSize";
                               context:nil];
 
     CMTime interval = CMTimeMakeWithSeconds(kTimeRefreshInterval, NSEC_PER_SEC);
-    @weakify(self)
+    @zf_weakify(self)
     _timeObserver = [self.player addPeriodicTimeObserverForInterval:interval queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
-        @strongify(self)
+        @zf_strongify(self)
         if (!self) return;
         NSArray *loadedRanges = self.playerItem.seekableTimeRanges;
         if (loadedRanges.count > 0 && self.playerItem.duration.timescale != 0) {
@@ -365,7 +365,7 @@ static NSString *const kPresentationSize         = @"presentationSize";
     }];
     
     _itemEndObserver = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
-        @strongify(self)
+        @zf_strongify(self)
         if (!self) return;
         self.playState = ZFPlayerPlayStatePlayStopped;
         if (self.playerDidToEnd) self.playerDidToEnd(self);

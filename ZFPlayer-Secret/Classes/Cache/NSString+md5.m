@@ -21,4 +21,5 @@
     
     return [hash lowercaseString];
 }
+
 @end

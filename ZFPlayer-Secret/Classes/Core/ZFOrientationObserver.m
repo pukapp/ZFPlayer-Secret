@@ -23,7 +23,7 @@
 // THE SOFTWARE.
 
 #import "ZFOrientationObserver.h"
-#import "ZFPlayer.h"
+#import "ZFPlayer_Secret.h"
 
 #define SysVersion [[UIDevice currentDevice] systemVersion].floatValue
 

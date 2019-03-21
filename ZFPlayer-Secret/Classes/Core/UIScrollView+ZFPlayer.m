@@ -25,7 +25,7 @@
 #import "UIScrollView+ZFPlayer.h"
 #import <objc/runtime.h>
 #import "ZFReachabilityManager.h"
-#import "ZFPlayer.h"
+#import "ZFPlayer_Secret.h"
 #import "ZFKVOController.h"
 
 #pragma clang diagnostic push
@@ -174,9 +174,9 @@ UIKIT_STATIC_INLINE void Hook_Method(Class originalClass, SEL originalSel, Class
 
 - (void)zf_scrollViewDidStopScroll {
     if (!self.zf_enableScrollHook) return;
-    @weakify(self)
+    @zf_weakify(self)
     [self zf_filterShouldPlayCellWhileScrolled:^(NSIndexPath * _Nonnull indexPath) {
-        @strongify(self)
+        @zf_strongify(self)
         if (self.zf_scrollViewDidStopScrollCallback) self.zf_scrollViewDidStopScrollCallback(indexPath);
         if (self.scrollViewDidStopScroll) self.scrollViewDidStopScroll(indexPath);
     }];
@@ -412,9 +412,9 @@ UIKIT_STATIC_INLINE void Hook_Method(Class originalClass, SEL originalSel, Class
 
 - (void)zf_filterShouldPlayCellWhileScrolled:(void (^ __nullable)(NSIndexPath *indexPath))handler {
     if (!self.zf_shouldAutoPlay) return;
-    @weakify(self)
+    @zf_weakify(self)
     [self zf_filterShouldPlayCellWhileScrolling:^(NSIndexPath *indexPath) {
-        @strongify(self)
+        @zf_strongify(self)
         if ([ZFReachabilityManager sharedManager].isReachableViaWWAN && !self.zf_WWANAutoPlay) {
             /// 移动网络
             self.zf_shouldPlayIndexPath = indexPath;

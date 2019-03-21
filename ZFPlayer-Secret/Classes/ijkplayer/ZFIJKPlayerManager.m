@@ -26,7 +26,7 @@
 #if __has_include(<ZFPlayer/ZFPlayer.h>)
 #import <ZFPlayer/ZFPlayer.h>
 #else
-#import "ZFPlayer.h"
+#import "ZFPlayer_Secret.h"
 #endif
 
 #if __has_include(<IJKMediaFramework/IJKMediaFramework.h>)
@@ -122,9 +122,9 @@
 }
 
 - (void)replay {
-    @weakify(self)
+    @zf_weakify(self)
     [self seekToTime:0 completionHandler:^(BOOL finished) {
-        @strongify(self)
+        @zf_strongify(self)
         [self play];
     }];
 }

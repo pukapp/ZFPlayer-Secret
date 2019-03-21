@@ -23,7 +23,7 @@
 // THE SOFTWARE.
 
 #import "ZFPlayerView.h"
-#import "ZFPlayer.h"
+#import "ZFPlayer_Secret.h"
 
 @interface ZFPlayerView ()
 

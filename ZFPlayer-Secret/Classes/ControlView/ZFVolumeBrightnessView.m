@@ -28,7 +28,7 @@
 #if __has_include(<ZFPlayer/ZFPlayer.h>)
 #import <ZFPlayer/ZFPlayer.h>
 #else
-#import "ZFPlayer.h"
+#import "ZFPlayer_Secret.h"
 #endif
 
 @interface ZFVolumeBrightnessView ()

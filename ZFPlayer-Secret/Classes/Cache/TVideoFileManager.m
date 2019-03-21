@@ -10,7 +10,6 @@
 #import <libkern/OSAtomic.h>
 #import "pthread.h"
 #import <os/lock.h>
-#import <Secret-Swift.h>
 
 static NSString* VideoCachePath = nil;
 @implementation TVideoFileManager
@@ -54,10 +53,11 @@ static NSString* VideoCachePath = nil;
 
 - (void)saveSegmentToPlist
 {
-    NSString * path = VideoDownLoader.cacheVideoPath;
-    NSString* segmentPath = [NSString stringWithFormat:@"%@/%@.plist",path,_fileName];
-    NSDictionary* dic = @{@"fileLength":@(_fileLength), @"fileArr":_segmentArr};
-    [dic writeToFile:segmentPath atomically:YES];
+    //TODO:
+    //NSString * path = VideoDownLoader.cacheVideoPath;
+//    NSString* segmentPath = [NSString stringWithFormat:@"%@/%@.plist",path,_fileName];
+//    NSDictionary* dic = @{@"fileLength":@(_fileLength), @"fileArr":_segmentArr};
+//    [dic writeToFile:segmentPath atomically:YES];
 }
 
 - (void)setFileLength:(NSUInteger)length

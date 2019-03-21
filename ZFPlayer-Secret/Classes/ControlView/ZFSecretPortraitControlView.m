@@ -28,10 +28,8 @@
 #if __has_include(<ZFPlayer/ZFPlayer.h>)
 #import <ZFPlayer/ZFPlayer.h>
 #else
-#import "ZFPlayer.h"
+#import "ZFPlayer_Secret.h"
 #endif
-#import "AppDelegate.h"
-#import "Secret-Swift.h"
 
 @interface ZFSecretPortraitControlView () <ZFSliderViewDelegate>
 /// 返回按钮
@@ -90,9 +88,9 @@
 
 - (void)sliderTouchEnded:(float)value {
     if (self.player.totalTime > 0) {
-        @weakify(self)
+        @zf_weakify(self)
         [self.player seekToTime:self.player.totalTime*value completionHandler:^(BOOL finished) {
-            @strongify(self)
+            @zf_strongify(self)
             if (finished) {
                 self.slider.isdragging = NO;
                 [self.player.currentPlayerManager play];
@@ -118,9 +116,9 @@
 - (void)sliderTapped:(float)value {
     if (self.player.totalTime > 0) {
         self.slider.isdragging = YES;
-        @weakify(self)
+        @zf_weakify(self)
         [self.player seekToTime:self.player.totalTime*value completionHandler:^(BOOL finished) {
-            @strongify(self)
+            @zf_strongify(self)
             if (finished) {
                 self.slider.isdragging = NO;
                 [self.player.currentPlayerManager play];
@@ -197,30 +195,30 @@
     min_x = min_margin;
     min_w = 62;
     min_h = 28;
-    min_y = (self.bottomToolView.height - min_h)/2;
+    min_y = (self.bottomToolView.zf_height - min_h)/2;
     self.currentTimeLabel.frame = CGRectMake(min_x, min_y, min_w, min_h);
     
     min_w = 62;
     min_h = 28;
-    min_x = self.bottomToolView.width - min_w - 4;
+    min_x = self.bottomToolView.zf_width - min_w - 4;
     min_y = 0;
     self.totalTimeLabel.frame = CGRectMake(min_x, min_y, min_w, min_h);
-    self.totalTimeLabel.centerY = self.currentTimeLabel.centerY;
+    self.totalTimeLabel.zf_centerY = self.currentTimeLabel.zf_centerY;
     
-    min_x = self.currentTimeLabel.right + 4;
+    min_x = self.currentTimeLabel.zf_right + 4;
     min_y = 0;
-    min_w = self.totalTimeLabel.left - min_x - 4;
+    min_w = self.totalTimeLabel.zf_left - min_x - 4;
     min_h = 30;
     self.slider.frame = CGRectMake(min_x, min_y, min_w, min_h);
-    self.slider.centerY = self.currentTimeLabel.centerY;
+    self.slider.zf_centerY = self.currentTimeLabel.zf_centerY;
  
     if (!self.isShow) {
-        self.topToolView.y = -self.topToolView.height;
-        self.bottomToolView.y = self.height;
+        self.topToolView.zf_y = -self.topToolView.zf_height;
+        self.bottomToolView.zf_y = self.zf_height;
         self.playOrPauseBtn.alpha = 0;
     } else {
-        self.topToolView.y = 0;
-        self.bottomToolView.y = self.height - self.bottomToolView.height;
+        self.topToolView.zf_y = 0;
+        self.bottomToolView.zf_y = self.zf_height - self.bottomToolView.zf_height;
         self.playOrPauseBtn.alpha = 1;
     }
 }
@@ -244,16 +242,16 @@
     self.topToolView.alpha = 1;
     self.bottomToolView.alpha = 1;
     self.isShow = YES;
-    self.topToolView.y = 0;
-    self.bottomToolView.y = self.height - self.bottomToolView.height;
+    self.topToolView.zf_y = 0;
+    self.bottomToolView.zf_y = self.zf_height - self.bottomToolView.zf_height;
     self.playOrPauseBtn.alpha = 1;
     self.player.statusBarHidden = NO;
 }
 
 - (void)hideControlView {
     self.isShow = NO;
-    self.topToolView.y = -self.topToolView.height;
-    self.bottomToolView.y = self.height;
+    self.topToolView.zf_y = -self.topToolView.zf_height;
+    self.bottomToolView.zf_y = self.zf_height;
     self.playOrPauseBtn.alpha = 0;
     self.player.statusBarHidden = NO;
     self.topToolView.alpha = 0;
@@ -261,7 +259,7 @@
 }
 
 - (BOOL)shouldResponseGestureWithPoint:(CGPoint)point withGestureType:(ZFPlayerGestureType)type touch:(nonnull UITouch *)touch {
-    if (point.y > self.bottomToolView.y || [touch.view isKindOfClass:[UIButton class]]) {
+    if (point.y > self.bottomToolView.zf_y || [touch.view isKindOfClass:[UIButton class]]) {
         return NO;
     }
     if (type == ZFPlayerGestureTypePan && self.player.scrollView) {

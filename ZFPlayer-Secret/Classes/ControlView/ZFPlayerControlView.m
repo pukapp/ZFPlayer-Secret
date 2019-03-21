@@ -35,7 +35,7 @@
 #if __has_include(<ZFPlayer/ZFPlayer.h>)
 #import <ZFPlayer/ZFPlayer.h>
 #else
-#import "ZFPlayer.h"
+#import "ZFPlayer_Secret.h"
 #endif
 
 static const CGFloat ZFPlayerAnimationTimeInterval              = 2.5f;
@@ -102,8 +102,8 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
     CGFloat min_y = 0;
     CGFloat min_w = 0;
     CGFloat min_h = 0;
-    CGFloat min_view_w = self.width;
-    CGFloat min_view_h = self.height;
+    CGFloat min_view_w = self.zf_width;
+    CGFloat min_view_h = self.zf_height;
     
     min_w = min_view_w;
     min_h = min_view_h;
@@ -115,8 +115,8 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
     min_w = 80;
     min_h = 80;
     self.activity.frame = CGRectMake(min_x, min_y, min_w, min_h);
-    self.activity.centerX = self.centerX;
-    self.activity.centerY = self.centerY + 10;
+    self.activity.zf_centerX = self.zf_centerX;
+    self.activity.zf_centerY = self.zf_centerY + 10;
     
     min_w = 150;
     min_h = 30;
@@ -129,20 +129,20 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
     self.fastView.center = self.center;
     
     min_w = 32;
-    min_x = (self.fastView.width - min_w) / 2;
+    min_x = (self.fastView.zf_width - min_w) / 2;
     min_y = 5;
     min_h = 32;
     self.fastImageView.frame = CGRectMake(min_x, min_y, min_w, min_h);
     
     min_x = 0;
-    min_y = self.fastImageView.bottom + 2;
-    min_w = self.fastView.width;
+    min_y = self.fastImageView.zf_bottom + 2;
+    min_w = self.fastView.zf_width;
     min_h = 20;
     self.fastTimeLabel.frame = CGRectMake(min_x, min_y, min_w, min_h);
     
     min_x = 12;
-    min_y = self.fastTimeLabel.bottom + 5;
-    min_w = self.fastView.width - 2 * min_x;
+    min_y = self.fastTimeLabel.zf_bottom + 5;
+    min_w = self.fastView.zf_width - 2 * min_x;
     min_h = 10;
     self.fastProgressView.frame = CGRectMake(min_x, min_y, min_w, min_h);
     
@@ -187,9 +187,9 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
 - (void)autoFadeOutControlView {
     self.controlViewAppeared = YES;
     [self cancelAutoFadeOutControlView];
-    @weakify(self)
+    @zf_weakify(self)
     self.afterBlock = dispatch_block_create(0, ^{
-        @strongify(self)
+        @zf_strongify(self)
         [self hideControlViewWithAnimated:YES];
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(ZFPlayerAnimationTimeInterval * NSEC_PER_SEC)), dispatch_get_main_queue(),self.afterBlock);
@@ -514,14 +514,14 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
 
 - (ZFPortraitControlView *)portraitControlView {
     if (!_portraitControlView) {
-        @weakify(self)
+        @zf_weakify(self)
         _portraitControlView = [[ZFPortraitControlView alloc] init];
         _portraitControlView.sliderValueChanging = ^(CGFloat value, BOOL forward) {
-            @strongify(self)
+            @zf_strongify(self)
             [self cancelAutoFadeOutControlView];
         };
         _portraitControlView.sliderValueChanged = ^(CGFloat value) {
-             @strongify(self)
+             @zf_strongify(self)
             [self autoFadeOutControlView];
         };
     }
@@ -530,14 +530,14 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
 
 - (ZFLandScapeControlView *)landScapeControlView {
     if (!_landScapeControlView) {
-        @weakify(self)
+        @zf_weakify(self)
         _landScapeControlView = [[ZFLandScapeControlView alloc] init];
         _landScapeControlView.sliderValueChanging = ^(CGFloat value, BOOL forward) {
-            @strongify(self)
+            @zf_strongify(self)
             [self cancelAutoFadeOutControlView];
         };
         _landScapeControlView.sliderValueChanged = ^(CGFloat value) {
-            @strongify(self)
+            @zf_strongify(self)
             [self autoFadeOutControlView];
         };
     }
@@ -629,9 +629,9 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
 - (ZFSmallFloatControlView *)floatControlView {
     if (!_floatControlView) {
         _floatControlView = [[ZFSmallFloatControlView alloc] init];
-        @weakify(self)
+        @zf_weakify(self)
         _floatControlView.closeClickCallback = ^{
-            @strongify(self)
+            @zf_strongify(self)
             [self.player stopCurrentPlayingCell];
             [self resetControlView];
         };

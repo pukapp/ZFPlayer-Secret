@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Alamofire
+//import Alamofire
 
 @objcMembers public class VideoDownLoader: NSObject {
     
@@ -25,34 +25,34 @@ import Alamofire
     private static var downloadingUrls: Set = Set<String>()
     
     private static var downedUrls: Set = Set<String>()
-    
+    //TODO:
     //MD5 为视频数据加密签名
-    @objc(downLoadVideoWithUrl:downloadMd5:)
-    public static func downLoadVideo(with downloadUrl: String?, downloadMd5: String? = nil) {
-        guard let url = downloadUrl, let md5 = downloadMd5, url.count > 0, md5.count > 0 else {return}
-        let exist = cacheFileExists(fileName: url.md5)
-        if  exist, let cachefile = cacheFile(fileName: url.md5) {
-            let lurl = URL.init(fileURLWithPath: cachefile)
-            let data = try? Data.init(contentsOf: lurl)
-            guard let d = data, d.wr_MD5Hash().lowercased() == md5 else {return}
-            downedUrls.insert(url.md5)
-            return
-        }
-        guard !downedUrls.contains(url.md5) else {return}
-        guard !downloadingUrls.contains(url.md5) else {return}
-        downloadingUrls.insert(url.md5)
-        clearFile(fileName: url.md5)
-        
-        NetworkManager.manager.download(url) { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-            return (URL.init(fileURLWithPath: cacheFile(fileName: url.md5)!), Alamofire.DownloadRequest.DownloadOptions.removePreviousFile)
-            }.responseJSON { (_) in
-                let index = downloadingUrls.firstIndex(of: url.md5)
-                if let ind = index {
-                    downloadingUrls.remove(at: ind)
-                }
-        }
-    }
-    
+//    @objc(downLoadVideoWithUrl:downloadMd5:)
+//    public static func downLoadVideo(with downloadUrl: String?, downloadMd5: String? = nil) {
+//        guard let url = downloadUrl, let md5 = downloadMd5, url.count > 0, md5.count > 0 else {return}
+//        let exist = cacheFileExists(fileName: url.md5)
+//        if  exist, let cachefile = cacheFile(fileName: url.md5) {
+//            let lurl = URL.init(fileURLWithPath: cachefile)
+//            let data = try? Data.init(contentsOf: lurl)
+//            guard let d = data, d.wr_MD5Hash().lowercased() == md5 else {return}
+//            downedUrls.insert(url.md5)
+//            return
+//        }
+//        guard !downedUrls.contains(url.md5) else {return}
+//        guard !downloadingUrls.contains(url.md5) else {return}
+//        downloadingUrls.insert(url.md5)
+//        clearFile(fileName: url.md5)
+//
+//        NetworkManager.manager.download(url) { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+//            return (URL.init(fileURLWithPath: cacheFile(fileName: url.md5)!), Alamofire.DownloadRequest.DownloadOptions.removePreviousFile)
+//            }.responseJSON { (_) in
+//                let index = downloadingUrls.firstIndex(of: url.md5)
+//                if let ind = index {
+//                    downloadingUrls.remove(at: ind)
+//                }
+//        }
+//    }
+//
     public static func cacheFileExists(fileName: String?) -> Bool {
         let videoPath = cacheFile(fileName: fileName)
         guard let videop = videoPath else {return false}

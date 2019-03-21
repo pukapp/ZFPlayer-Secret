@@ -22,6 +22,7 @@
 // THE SOFTWARE.
 
 #import <objc/runtime.h>
+#import <UIKit/UIKit.h>
 
 @implementation UITabBarController (ZFPlayerRotation)
 
