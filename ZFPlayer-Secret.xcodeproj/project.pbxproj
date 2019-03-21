@@ -39,13 +39,11 @@
 		734A2AC322433BEF002E5B3B /* TVideoLoadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7522433BEE002E5B3B /* TVideoLoadManager.m */; };
 		734A2AC422433BEF002E5B3B /* TVideoDownQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7622433BEE002E5B3B /* TVideoDownQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2AC522433BEF002E5B3B /* TVideoFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7722433BEE002E5B3B /* TVideoFileManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		734A2AC622433BEF002E5B3B /* NSString+md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7822433BEE002E5B3B /* NSString+md5.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2AC722433BEF002E5B3B /* TVideoDownOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7922433BEE002E5B3B /* TVideoDownOperation.m */; };
 		734A2AC822433BEF002E5B3B /* TVideoLoadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7A22433BEE002E5B3B /* TVideoLoadManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2AC922433BEF002E5B3B /* TVideoLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A7B22433BEE002E5B3B /* TVideoLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2ACA22433BEF002E5B3B /* TVideoFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7C22433BEE002E5B3B /* TVideoFileManager.m */; };
 		734A2ACB22433BEF002E5B3B /* TVideoDownQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7D22433BEE002E5B3B /* TVideoDownQueue.m */; };
-		734A2ACC22433BEF002E5B3B /* NSString+md5.m in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7E22433BEE002E5B3B /* NSString+md5.m */; };
 		734A2ACD22433BEF002E5B3B /* VideoDownLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734A2A7F22433BEE002E5B3B /* VideoDownLoader.swift */; };
 		734A2ACE22433BEF002E5B3B /* TVideoDownOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A8022433BEE002E5B3B /* TVideoDownOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734A2ACF22433BEF002E5B3B /* ZFIJKPlayerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 734A2A8222433BEE002E5B3B /* ZFIJKPlayerManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -116,13 +114,11 @@
 		734A2A7522433BEE002E5B3B /* TVideoLoadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoLoadManager.m; sourceTree = "<group>"; };
 		734A2A7622433BEE002E5B3B /* TVideoDownQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoDownQueue.h; sourceTree = "<group>"; };
 		734A2A7722433BEE002E5B3B /* TVideoFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoFileManager.h; sourceTree = "<group>"; };
-		734A2A7822433BEE002E5B3B /* NSString+md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+md5.h"; sourceTree = "<group>"; };
 		734A2A7922433BEE002E5B3B /* TVideoDownOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoDownOperation.m; sourceTree = "<group>"; };
 		734A2A7A22433BEE002E5B3B /* TVideoLoadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoLoadManager.h; sourceTree = "<group>"; };
 		734A2A7B22433BEE002E5B3B /* TVideoLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoLoader.h; sourceTree = "<group>"; };
 		734A2A7C22433BEE002E5B3B /* TVideoFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoFileManager.m; sourceTree = "<group>"; };
 		734A2A7D22433BEE002E5B3B /* TVideoDownQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoDownQueue.m; sourceTree = "<group>"; };
-		734A2A7E22433BEE002E5B3B /* NSString+md5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+md5.m"; sourceTree = "<group>"; };
 		734A2A7F22433BEE002E5B3B /* VideoDownLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDownLoader.swift; sourceTree = "<group>"; };
 		734A2A8022433BEE002E5B3B /* TVideoDownOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoDownOperation.h; sourceTree = "<group>"; };
 		734A2A8222433BEE002E5B3B /* ZFIJKPlayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFIJKPlayerManager.h; sourceTree = "<group>"; };
@@ -251,8 +247,6 @@
 				734A2A7522433BEE002E5B3B /* TVideoLoadManager.m */,
 				734A2A7622433BEE002E5B3B /* TVideoDownQueue.h */,
 				734A2A7722433BEE002E5B3B /* TVideoFileManager.h */,
-				734A2A7822433BEE002E5B3B /* NSString+md5.h */,
-				734A2A7E22433BEE002E5B3B /* NSString+md5.m */,
 				734A2A7922433BEE002E5B3B /* TVideoDownOperation.m */,
 				734A2A7A22433BEE002E5B3B /* TVideoLoadManager.h */,
 				734A2A7B22433BEE002E5B3B /* TVideoLoader.h */,
@@ -366,7 +360,6 @@
 				734A2AE022433BEF002E5B3B /* ZFPortraitControlView.h in Headers */,
 				734A2ACF22433BEF002E5B3B /* ZFIJKPlayerManager.h in Headers */,
 				734A2AC422433BEF002E5B3B /* TVideoDownQueue.h in Headers */,
-				734A2AC622433BEF002E5B3B /* NSString+md5.h in Headers */,
 				734A2AE222433BEF002E5B3B /* UIView+ZFFrame.h in Headers */,
 				734A2AEF22433BEF002E5B3B /* ZFLandScapeControlView.h in Headers */,
 				734A2AE322433BEF002E5B3B /* ZFUtilities.h in Headers */,
@@ -455,7 +448,6 @@
 				734A2ADD22433BEF002E5B3B /* ZFNetworkSpeedMonitor.m in Sources */,
 				734A2AB222433BEE002E5B3B /* UIScrollView+ZFPlayer.m in Sources */,
 				734A2AD122433BEF002E5B3B /* ZFAVPlayerManager.m in Sources */,
-				734A2ACC22433BEF002E5B3B /* NSString+md5.m in Sources */,
 				734A2AAF22433BEE002E5B3B /* ZFPlayerLogManager.m in Sources */,
 				734A2AE722433BEF002E5B3B /* ZFSmallFloatControlView.m in Sources */,
 				734A2AE922433BEF002E5B3B /* ZFSpeedLoadingView.m in Sources */,

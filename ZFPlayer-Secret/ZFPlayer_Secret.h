@@ -65,7 +65,6 @@ FOUNDATION_EXPORT const unsigned char ZFPlayer_SecretVersionString[];
 #import "ZFDouYinControlView.h"
 #import "ZFSecretPlayerControlView.h"
 #import "ZFAVPlayerManager.h"
-#import "NSString+md5.h"
 #import "ZFPlayerNotification.h"
 #import "ZFIJKPlayerManager.h"
 #import "ZFSmallFloatControlView.h"

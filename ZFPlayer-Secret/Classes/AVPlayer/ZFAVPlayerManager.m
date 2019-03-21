@@ -31,7 +31,6 @@
 #else
 #import "ZFPlayer_Secret.h"
 #endif
-#import "NSString+md5.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
 
