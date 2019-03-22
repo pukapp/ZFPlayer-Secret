@@ -272,14 +272,13 @@ static NSString *const kPresentationSize         = @"presentationSize";
         self.isNeedLoad = YES;
         return _asset;
     }
-    NSString * fileName = [url md5];
-    if ( [TVideoFileManager hasFinishedVideoCache:fileName]) { ///在内存中
-        _asset = [AVURLAsset assetWithURL:[TVideoFileManager cacheFileExistsWithName:fileName]];
+    if ( [TVideoFileManager hasFinishedVideoCache:url]) { ///在内存中
+        _asset = [AVURLAsset assetWithURL:[TVideoFileManager cacheFileURLExistsWithURLString:url]];
         self.isNeedLoad = NO;
     } else { ///不在内存中，则边加载边下载
         self.isNeedLoad = YES;
         _asset = [AVURLAsset URLAssetWithURL:[NSURL URLWithString:[TVideoLoadManager encryptionDownLoadUrl:url]]  options:nil];
-        _downLoadManager = [[TVideoLoadManager alloc] initWithFileName:fileName];
+        _downLoadManager = [[TVideoLoadManager alloc] initWithURLString:url];
         [_asset.resourceLoader setDelegate:_downLoadManager queue:dispatch_get_global_queue(0, 0)];
     }
 

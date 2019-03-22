@@ -11,6 +11,8 @@
 #import <libkern/OSAtomic.h>
 #import "TVideoDownOperation.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "NSString+md5.h"
+
 @implementation TVideoLoadManager
 {
     NSUInteger _fileLength;
@@ -24,10 +26,10 @@
 
 
 
-- (instancetype)initWithFileName:(NSString*)fileName
+- (instancetype)initWithURLString:(NSString*)url
 {
     self = [super init];
-    _fileManager = [[TVideoFileManager alloc]initWithFileName:fileName];
+    _fileManager = [[TVideoFileManager alloc]initWithFileName:[url md5]];
      _requestArr = [NSMutableArray arrayWithCapacity:0];
      oslock = OS_SPINLOCK_INIT;
     return self;

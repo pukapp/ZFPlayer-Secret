@@ -23,7 +23,8 @@
 - (void)saveSegmentData:(NSUInteger)offset length:(NSUInteger)length;
 
 + (void)setVideoCachePath:(NSString*)path;
-+ (NSURL *)cacheFileExistsWithName:(NSString *)fileName;
++ (NSString *)cacheFilePathExistsWithURLString:(NSString *)urlString;
++ (NSURL *)cacheFileURLExistsWithURLString:(NSString *)urlString;
 + (BOOL)hasFinishedVideoCache:(NSString*)fileName;
 + (BOOL)clearCache;
 + (NSString *)cacheFolderPath;

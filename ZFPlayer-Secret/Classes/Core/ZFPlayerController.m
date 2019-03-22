@@ -1067,9 +1067,8 @@
     }
 }
     
-- (void)playTheIndexPath:(NSIndexPath *)indexPath assetURL:(NSURL *)assetURL md5:(NSString *)md5 scrollToTop:(BOOL)scrollToTop {
+- (void)secret_playTheIndexPath:(NSIndexPath *)indexPath assetURL:(NSURL *)assetURL scrollToTop:(BOOL)scrollToTop {
     ZFAVPlayerManager *avManager = (ZFAVPlayerManager *)self.currentPlayerManager;
-    avManager.md5 = md5;
     self.playingIndexPath = indexPath;
     self.assetURL = assetURL;
     self.currentPlayIndex = indexPath.row;

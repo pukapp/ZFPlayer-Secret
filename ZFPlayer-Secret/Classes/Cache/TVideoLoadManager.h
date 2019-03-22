@@ -18,7 +18,7 @@
 @interface TVideoLoadManager : NSObject<AVAssetResourceLoaderDelegate,TVideoDownQueueProtocol>
 @property (nonatomic,weak) id<VideoLoadManagerProtocol>delegate;
 + (NSString*)encryptionDownLoadUrl:(NSString*)url;
-- (instancetype)initWithFileName:(NSString*)fileName;
+- (instancetype)initWithURLString:(NSString*)url;
 - (BOOL)netWorkError;
 - (void)setHTTPHeaderField:(NSDictionary*)header;
 - (void)cancelDownLoad;

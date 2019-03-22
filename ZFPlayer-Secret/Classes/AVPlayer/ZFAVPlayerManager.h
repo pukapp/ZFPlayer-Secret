@@ -27,8 +27,6 @@
 
 @interface ZFAVPlayerManager : NSObject <ZFPlayerMediaPlayback>
 
-@property (nonatomic, copy) NSString *md5;
-
 @property (nonatomic, assign) ZFPlayerPlaybackState playState;
     
 @end

@@ -9,6 +9,8 @@
 #import "TVideoFileManager.h"
 #import <libkern/OSAtomic.h>
 #import "pthread.h"
+#import "NSString+md5.h"
+
 static NSString* VideoCachePath = nil;
 @implementation TVideoFileManager
 {
@@ -374,12 +376,22 @@ static NSString* VideoCachePath = nil;
     return cacheFolderPath;
 }
 
-
-+ (NSURL *)cacheFileExistsWithName:(NSString *)fileName {
-    
++ (NSString *)cacheFilePathExistsWithURLString:(NSString *)urlString {
+    NSString * fileName = [urlString md5];
     NSFileManager * manager = [NSFileManager defaultManager];
     NSString * cacheFolderPath = [TVideoFileManager cacheFolderPath];
-     NSString* videoPath = [NSString stringWithFormat:@"%@/%@.mp4",cacheFolderPath,fileName];
+    NSString* videoPath = [NSString stringWithFormat:@"%@/%@.mp4",cacheFolderPath, fileName];
+    if ([manager fileExistsAtPath:videoPath] == NO) {
+        return nil;
+    }
+    return videoPath;
+}
+
++ (NSURL *)cacheFileURLExistsWithURLString:(NSString *)urlString {
+    NSString * fileName = [urlString md5];
+    NSFileManager * manager = [NSFileManager defaultManager];
+    NSString * cacheFolderPath = [TVideoFileManager cacheFolderPath];
+     NSString* videoPath = [NSString stringWithFormat:@"%@/%@.mp4",cacheFolderPath, fileName];
     if ([manager fileExistsAtPath:videoPath] == NO) {
         return nil;
     }
@@ -388,8 +400,8 @@ static NSString* VideoCachePath = nil;
     return path;
 }
 
-
-+ (BOOL)hasFinishedVideoCache:(NSString *)fileName{
++ (BOOL)hasFinishedVideoCache:(NSString *)url{
+    NSString * fileName = [url md5];
     NSString * path =  [TVideoFileManager cacheFolderPath];
     NSString* segmentPath = [NSString stringWithFormat:@"%@/%@.plist",path,fileName];
     NSDictionary * dic = [NSDictionary dictionaryWithContentsOfFile:segmentPath];
