@@ -58,6 +58,8 @@ static NSString* VideoCachePath = nil;
     NSString* segmentPath = [NSString stringWithFormat:@"%@/%@.plist",path,_fileName];
     NSDictionary* dic = @{@"fileLength":@(_fileLength), @"fileArr":_segmentArr};
     [dic writeToFile:segmentPath atomically:YES];
+    
+    [self saveCacheDataToPlist];
 }
 
 - (void)setFileLength:(NSUInteger)length
@@ -72,9 +74,9 @@ static NSString* VideoCachePath = nil;
 
 
 
-- (void)writeTempFileData:(NSData *)data {
-    
-     pthread_rwlock_wrlock(&rwlock);
+- (void)writeTempFileData:(NSData *)data
+{
+    pthread_rwlock_wrlock(&rwlock);
     [_writeFileHandle seekToEndOfFile];
     [_writeFileHandle writeData:data];
     pthread_rwlock_unlock(&rwlock);
@@ -96,6 +98,28 @@ static NSString* VideoCachePath = nil;
     _writeFileHandle = nil;
 }
 
+///清除缓存,根据下载时间依次放置在array里，每次缓存里面只要超过了80个视频，就删除最前面的10个视频
+- (void)saveCacheDataToPlist
+{
+    NSString * path = [TVideoFileManager cacheFolderPath];
+    NSString* cacheOrderPath = [NSString stringWithFormat:@"%@/videoCacheDataInfo.plist",path];
+    NSMutableArray * arr = [NSMutableArray arrayWithContentsOfFile:cacheOrderPath];
+    NSString * total = [arr componentsJoinedByString: @","];
+    if ([total containsString: _fileName]) {
+        return;
+    }
+    if (arr.count > 80) {
+        for (int i = 0; i < 10; i++) {
+            [TVideoFileManager clearCacheWithFileName: arr[i]];
+        }
+        [arr removeObjectsInRange:NSMakeRange(0, 10)];
+    }
+    if (arr == nil) {
+        arr = [NSMutableArray array];
+    }
+    [arr addObject:_fileName];
+    [arr writeToFile:cacheOrderPath atomically:YES];
+}
 
 - (NSData *)readTempFileDataWithOffset:(NSUInteger)offset length:(NSUInteger)length {
     
@@ -392,7 +416,7 @@ static NSString* VideoCachePath = nil;
     NSString * fileName = [urlString md5];
     NSFileManager * manager = [NSFileManager defaultManager];
     NSString * cacheFolderPath = [TVideoFileManager cacheFolderPath];
-     NSString* videoPath = [NSString stringWithFormat:@"%@/%@.mp4",cacheFolderPath, fileName];
+    NSString* videoPath = [NSString stringWithFormat:@"%@/%@.mp4",cacheFolderPath, fileName];
     if ([manager fileExistsAtPath:videoPath] == NO) {
         return nil;
     }
@@ -425,6 +449,15 @@ static NSString* VideoCachePath = nil;
     return [manager removeItemAtPath:[TVideoFileManager cacheFolderPath] error:nil];
 }
 
++ (void)clearCacheWithFileName:(NSString *)fileName {
+    NSFileManager * manager = [NSFileManager defaultManager];
+    NSString * cacheFolderPath = [TVideoFileManager cacheFolderPath];
+    NSString* videoPath = [NSString stringWithFormat:@"%@/%@.mp4",cacheFolderPath, fileName];
+    NSString* videoPlistPath = [NSString stringWithFormat:@"%@/%@.plist",cacheFolderPath, fileName];
+    [manager removeItemAtPath:videoPath error: nil];
+    [manager removeItemAtPath:videoPlistPath error: nil];
+}
+
 + (void)setVideoCachePath:(NSString*)path
 {
     VideoCachePath = path;
@@ -440,7 +473,6 @@ static NSString* VideoCachePath = nil;
     NSString* cache = [[allCachePaths objectAtIndex:0] stringByAppendingPathComponent:@"video_cache"];
     VideoCachePath = cache;
     return cache;
-//    return [[NSHomeDirectory( ) stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"VideoCaches"];
 }
 
 @end
