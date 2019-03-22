@@ -95,7 +95,7 @@
 		73337D4722439E67009C9798 /* TVideoLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoLoader.h; sourceTree = "<group>"; };
 		73337D522243A5DB009C9798 /* NSString+md5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+md5.m"; sourceTree = "<group>"; };
 		73337D532243A5DC009C9798 /* NSString+md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+md5.h"; sourceTree = "<group>"; };
-		734A2A4C22433BBE002E5B3B /* ZFPlayer_Secret.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZFPlayer_Secret.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		734A2A4C22433BBE002E5B3B /* ZFPlayer-Secret.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "ZFPlayer-Secret.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		734A2A4F22433BBE002E5B3B /* ZFPlayer_Secret.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZFPlayer_Secret.h; sourceTree = "<group>"; };
 		734A2A5022433BBE002E5B3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		734A2A5922433BEE002E5B3B /* ZFPlayerNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFPlayerNotification.h; sourceTree = "<group>"; };
@@ -182,7 +182,7 @@
 		734A2A4D22433BBE002E5B3B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				734A2A4C22433BBE002E5B3B /* ZFPlayer_Secret.framework */,
+				734A2A4C22433BBE002E5B3B /* ZFPlayer-Secret.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -389,7 +389,7 @@
 			);
 			name = "ZFPlayer-Secret";
 			productName = "ZFPlayer-Secret";
-			productReference = 734A2A4C22433BBE002E5B3B /* ZFPlayer_Secret.framework */;
+			productReference = 734A2A4C22433BBE002E5B3B /* ZFPlayer-Secret.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -612,7 +612,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.secret.ZFPlayer-Secret";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_MODULE_NAME = "ZFPlayer-Secret";
+				PRODUCT_NAME = "ZFPlayer-Secret";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -638,7 +639,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.secret.ZFPlayer-Secret";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_MODULE_NAME = "ZFPlayer-Secret";
+				PRODUCT_NAME = "ZFPlayer-Secret";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
