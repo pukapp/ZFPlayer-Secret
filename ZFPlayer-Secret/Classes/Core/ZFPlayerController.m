@@ -1067,16 +1067,6 @@
     }
 }
     
-- (void)secret_playTheIndexPath:(NSIndexPath *)indexPath assetURL:(NSURL *)assetURL scrollToTop:(BOOL)scrollToTop {
-    ZFAVPlayerManager *avManager = (ZFAVPlayerManager *)self.currentPlayerManager;
-    self.playingIndexPath = indexPath;
-    self.assetURL = assetURL;
-    self.currentPlayIndex = indexPath.row;
-    if (scrollToTop) {
-        [self.scrollView zf_scrollToRowAtIndexPath:indexPath completionHandler:nil];
-    }
-}
-
 - (void)stopCurrentPlayingCell {
     if (self.scrollView.zf_playingIndexPath) {
         [self stop];

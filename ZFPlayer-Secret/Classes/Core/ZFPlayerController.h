@@ -325,9 +325,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// `assetURL` is the player URL.
 /// `scrollToTop` scroll the current cell to top with animations.
 - (void)playTheIndexPath:(NSIndexPath *)indexPath assetURL:(NSURL *)assetURL scrollToTop:(BOOL)scrollToTop;
-    
-///Secret专用
-- (void)secret_playTheIndexPath:(NSIndexPath *)indexPath assetURL:(NSURL *)assetURL scrollToTop:(BOOL)scrollToTop;
 
 /// Play the indexPath of url ,while the `assetURLs` or `sectionAssetURLs` is not NULL.
 /// `scrollToTop` scroll the current cell to top with animations.

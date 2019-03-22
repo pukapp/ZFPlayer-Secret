@@ -8,7 +8,7 @@
 
 #import "TVideoLoadManager.h"
 #import "TVideoFileManager.h"
-#import <libkern/OSAtomic.h>
+#import  <os/lock.h>
 #import "TVideoDownOperation.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "NSString+md5.h"
@@ -19,7 +19,7 @@
     NSUInteger _cancelLength;
     TVideoFileManager* _fileManager;
     NSMutableArray* _requestArr;
-    OSSpinLock oslock ;
+    os_unfair_lock oslock ;
     NSData* resourceData;
     NSDictionary* _httpHeader;
 }
@@ -31,7 +31,7 @@
     self = [super init];
     _fileManager = [[TVideoFileManager alloc]initWithFileName:[url md5]];
      _requestArr = [NSMutableArray arrayWithCapacity:0];
-     oslock = OS_SPINLOCK_INIT;
+     oslock = OS_UNFAIR_LOCK_INIT;
     return self;
 }
 
@@ -48,7 +48,7 @@
 }
 
 - (void)cancelDownLoad{
-    OSSpinLockLock(&oslock);
+    os_unfair_lock_lock(&oslock);
     for (TVideoDownQueue* temp in _requestArr) {
         AVAssetResourceLoadingRequest * compare = [temp assetResource];
         if (compare.isCancelled == NO && compare.isFinished == NO) {
@@ -57,19 +57,19 @@
         [temp cancelDownLoad];
     }
     [_requestArr removeAllObjects];
-    OSSpinLockUnlock(&oslock);
+    os_unfair_lock_unlock(&oslock);
 }
 
 - (BOOL)netWorkError
 {
-    OSSpinLockLock(&oslock);
+    os_unfair_lock_lock(&oslock);
     for (TVideoDownQueue* temp in _requestArr) {
         if (temp.isNetworkError == YES) {
-             OSSpinLockUnlock(&oslock);
+             os_unfair_lock_unlock(&oslock);
             return YES;
         }
     }
-     OSSpinLockUnlock(&oslock);
+     os_unfair_lock_unlock(&oslock);
     return NO;
 }
 #if 1
@@ -83,7 +83,7 @@
         loadingRequest.contentInformationRequest.byteRangeAccessSupported = YES;
     }
     
-    OSSpinLockLock(&oslock);
+    os_unfair_lock_lock(&oslock);
     
     if ([_fileManager getFileLength] != 0 )  {
         
@@ -93,7 +93,7 @@
             NSData* data =  [_fileManager readTempFileDataWithOffset:0 length:2];
             [loadingRequest.dataRequest respondWithData:data];
             [loadingRequest finishLoading];
-            OSSpinLockUnlock(&oslock);
+            os_unfair_lock_unlock(&oslock);
             return true;
         }
     }
@@ -102,7 +102,7 @@
     TVideoDownQueue* downLoad = [[TVideoDownQueue alloc]initWithFileManager:_fileManager WithLoadingRequest:loadingRequest loadingUrl:[NSURL URLWithString:downUrl] withHttpHead:_httpHeader];
     downLoad.delegate = self;
     [_requestArr addObject:downLoad];
-     OSSpinLockUnlock(&oslock);
+     os_unfair_lock_unlock(&oslock);
     return YES;
  }
 
@@ -169,7 +169,7 @@
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
 {
 //    NSLog(@"didCancelLoadingRequest  %ld-%ld",loadingRequest.dataRequest.requestedOffset,loadingRequest.dataRequest.requestedOffset+loadingRequest.dataRequest.requestedLength-1);
-    OSSpinLockLock(&oslock);
+    os_unfair_lock_lock(&oslock);
         NSMutableArray* removeAr = [NSMutableArray arrayWithCapacity:0];
         for (TVideoDownQueue* temp in _requestArr) {
             AVAssetResourceLoadingRequest * compare = [temp assetResource] ;
@@ -179,13 +179,13 @@
             }
         }
         [_requestArr removeObjectsInArray:removeAr];
-    OSSpinLockUnlock(&oslock);
+    os_unfair_lock_unlock(&oslock);
 }
 
 
 - (void)checkResourceLoader
 {
-    OSSpinLockLock(&oslock);
+    os_unfair_lock_lock(&oslock);
     NSMutableArray* removeAr = [NSMutableArray arrayWithCapacity:0];
     for (TVideoDownQueue* temp in _requestArr) {
         AVAssetResourceLoadingRequest * compare = [temp assetResource] ;
@@ -198,7 +198,7 @@
         }
     }
     [_requestArr removeObjectsInArray:removeAr];
-    OSSpinLockUnlock(&oslock);
+    os_unfair_lock_unlock(&oslock);
 
 }
 

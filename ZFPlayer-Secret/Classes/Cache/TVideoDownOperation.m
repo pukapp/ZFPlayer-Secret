@@ -7,7 +7,7 @@
 //
 
 #import "TVideoDownOperation.h"
-#import <libkern/OSAtomic.h>
+#import <os/lock.h>
 @interface TVideoDownOperation ()
 
 @property (assign, nonatomic, getter = isExecuting) BOOL executing;
@@ -25,7 +25,7 @@
     NSURLSession * _session;              //会话对象
     NSURLSessionDataTask * _task;
     NSURL* _downLoadUrl;
-    OSSpinLock _oslock;
+    os_unfair_lock _oslock;
 }
 @synthesize executing = _executing;
 @synthesize finished = _finished;
@@ -40,7 +40,7 @@
     _finished = NO;
     _downLoadUrl = url;
     self.netReachable = true;
-     _oslock = OS_SPINLOCK_INIT;
+     _oslock = OS_UNFAIR_LOCK_INIT;
 #if DEBUG
     if (_range.length < 1 ) {
         NSAssert(false, @"video downOperation range error");
@@ -87,7 +87,7 @@
 
 - (void)start
 {
-    OSSpinLockLock(&_oslock);
+    os_unfair_lock_lock(&_oslock);
     if (self.isCancelled) {
         self.finished = YES;
         return;
@@ -111,7 +111,7 @@
     [_task resume];
     
    
-     OSSpinLockUnlock(&_oslock);
+     os_unfair_lock_unlock(&_oslock);
 }
 
 
@@ -124,10 +124,9 @@
 }
 
 - (void)cancel {
-    
-   OSSpinLockLock(&_oslock);
+    os_unfair_lock_lock(&_oslock);
     [self cancelInternal];
-    OSSpinLockUnlock(&_oslock);
+    os_unfair_lock_unlock(&_oslock);
 }
 
 

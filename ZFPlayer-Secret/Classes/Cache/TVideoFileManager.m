@@ -8,6 +8,7 @@
 
 #import "TVideoFileManager.h"
 #import <libkern/OSAtomic.h>
+#import <os/lock.h>
 #import "pthread.h"
 #import "NSString+md5.h"
 
@@ -19,14 +20,14 @@ static NSString* VideoCachePath = nil;
      NSString* _fileName;
      NSUInteger _fileLength;
     NSMutableArray* _segmentArr;
-    __block  OSSpinLock oslock;
+    __block  os_unfair_lock oslock;
 }
  pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
 - (instancetype)initWithFileName:(NSString*)fileName
 {
     self = [super init];
     _fileName = fileName;
-     oslock = OS_SPINLOCK_INIT;
+     oslock = OS_UNFAIR_LOCK_INIT;
     
    NSString * path = [TVideoFileManager creatCacheDirectory];
 //    NSLog(@"document path %@",path);
@@ -137,14 +138,14 @@ static NSString* VideoCachePath = nil;
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         
-        OSSpinLockLock(&oslock);
+        os_unfair_lock_lock(&oslock);
         
         if (_segmentArr.count == 0) {
             
             NSArray* insertArr = @[start,end];
             [_segmentArr addObject:insertArr];
             [self saveSegmentToPlist];
-            OSSpinLockUnlock(&oslock);
+            os_unfair_lock_unlock(&oslock);
             return ;
         }
         
@@ -208,7 +209,7 @@ static NSString* VideoCachePath = nil;
             [_segmentArr insertObject:insertArr atIndex:startIndex];
         }
         [self saveSegmentToPlist];
-        OSSpinLockUnlock(&oslock);
+        os_unfair_lock_unlock(&oslock);
     });
 }
 
@@ -258,10 +259,10 @@ static NSString* VideoCachePath = nil;
 {
     NSNumber* start = [NSNumber numberWithUnsignedInteger:range.location];
     NSNumber* end = [NSNumber numberWithUnsignedInteger:range.location+range.length-1];
-    OSSpinLockLock(&oslock);
+    os_unfair_lock_lock(&oslock);
     
     if (_segmentArr.count == 0) {
-        OSSpinLockUnlock(&oslock);
+        os_unfair_lock_unlock(&oslock);
         return @[[self creatReadSegmentArr:start end:end isSave:NO]];
     }
     
@@ -269,7 +270,7 @@ static NSString* VideoCachePath = nil;
     float endIndex = [self searchSemgentIndex:end.unsignedIntegerValue withArr:_segmentArr];
     
     if (startIndex == endIndex) {  // 有两种情况 一个是在同一区间段 ，一个是在空白区域 ,不涉及跨区域
-        OSSpinLockUnlock(&oslock);
+        os_unfair_lock_unlock(&oslock);
         if ([self hasDecimal:startIndex]) {
             
             return @[[self creatReadSegmentArr:start end:end isSave:NO]];
@@ -341,7 +342,7 @@ static NSString* VideoCachePath = nil;
             [newSegmengArr replaceObjectAtIndex:newSegmengArr.count-1 withObject:replaceArr];
             
         }
-        OSSpinLockUnlock(&oslock);
+        os_unfair_lock_unlock(&oslock);
         return newSegmengArr;
     }
 }
