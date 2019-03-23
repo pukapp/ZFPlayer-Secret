@@ -21,6 +21,11 @@
     NSURL* _requestUrl;
 }
 
+- (void)dealloc {
+    [self sychronizeProcessToConfigure];
+    [self cancelDownLoad];
+}
+
 - (instancetype)initWithFileManager:(TVideoFileManager *)fileManager WithLoadingRequest:(AVAssetResourceLoadingRequest *)resource loadingUrl:(NSURL*)url withHttpHead:(NSDictionary *)httpHead
 {
     self = [super init];
@@ -177,9 +182,4 @@
     }
 }
 
-- (void)dealloc
-{
-    [self sychronizeProcessToConfigure];
-    [self cancelDownLoad];
-}
 @end

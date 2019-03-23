@@ -34,11 +34,12 @@
 
 @implementation ZFPlayerNotification
 
+- (void)dealloc {
+    [self removeNotification];
+}
+
 - (instancetype)init {
     self = [super init];
-    if (self) {
-       
-    }
     return self;
 }
 
@@ -67,10 +68,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"AVSystemController_SystemVolumeDidChangeNotification" object:nil];
-}
-
-- (void)dealloc {
-    [self removeNotification];
 }
 
 - (void)audioSessionRouteChangeNotification:(NSNotification*)notifi {

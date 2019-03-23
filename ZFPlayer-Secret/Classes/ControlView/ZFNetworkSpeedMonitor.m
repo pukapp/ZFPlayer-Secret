@@ -98,13 +98,10 @@ NSString *const ZFNetworkSpeedNotificationKey         = @"ZFNetworkSpeedNotifica
     
     uint32_t iBytes = 0;
     uint32_t oBytes = 0;
-    uint32_t allFlow = 0;
     uint32_t wifiIBytes = 0;
     uint32_t wifiOBytes = 0;
-    uint32_t wifiFlow = 0;
     uint32_t wwanIBytes = 0;
     uint32_t wwanOBytes = 0;
-    uint32_t wwanFlow = 0;
     
     for (ifa = ifa_list; ifa; ifa = ifa->ifa_next) {
         if (AF_LINK != ifa->ifa_addr->sa_family) continue;
@@ -116,7 +113,6 @@ NSString *const ZFNetworkSpeedNotificationKey         = @"ZFNetworkSpeedNotifica
             struct if_data* if_data = (struct if_data*)ifa->ifa_data;
             iBytes += if_data->ifi_ibytes;
             oBytes += if_data->ifi_obytes;
-            allFlow = iBytes + oBytes;
         }
         
         //wifi
@@ -124,7 +120,6 @@ NSString *const ZFNetworkSpeedNotificationKey         = @"ZFNetworkSpeedNotifica
             struct if_data* if_data = (struct if_data*)ifa->ifa_data;
             wifiIBytes += if_data->ifi_ibytes;
             wifiOBytes += if_data->ifi_obytes;
-            wifiFlow = wifiIBytes + wifiOBytes;
         }
         
         //3G or gprs
@@ -132,7 +127,6 @@ NSString *const ZFNetworkSpeedNotificationKey         = @"ZFNetworkSpeedNotifica
             struct if_data* if_data = (struct if_data*)ifa->ifa_data;
             wwanIBytes += if_data->ifi_ibytes;
             wwanOBytes += if_data->ifi_obytes;
-            wwanFlow = wwanIBytes + wwanOBytes;
         }
     }
     

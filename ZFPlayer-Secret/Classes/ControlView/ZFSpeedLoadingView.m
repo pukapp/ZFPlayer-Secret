@@ -21,7 +21,10 @@
 @end
 
 @implementation ZFSpeedLoadingView
-
+- (void)dealloc {
+    [self.speedMonitor stopNetworkSpeedMonitor];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ZFDownloadNetworkSpeedNotificationKey object:nil];
+}
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
@@ -50,11 +53,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkSpeedChanged:) name:ZFDownloadNetworkSpeedNotificationKey object:nil];
 }
 
-- (void)dealloc {
-    [self.speedMonitor stopNetworkSpeedMonitor];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:ZFDownloadNetworkSpeedNotificationKey object:nil];
-}
-
 - (void)layoutSubviews {
     [super layoutSubviews];
     CGFloat min_x = 0;
@@ -63,10 +61,7 @@
     CGFloat min_h = 0;
     CGFloat min_view_w = self.zf_width;
     CGFloat min_view_h = self.zf_height;
-    
-    min_w = min_view_w;
-    min_h = min_view_h;
-    
+
     min_w = 44;
     min_h = min_w;
     min_x = (min_view_w - min_w) / 2;

@@ -73,6 +73,10 @@
 
 @implementation ZFOrientationObserver
 
+- (void)dealloc {
+    [self removeDeviceOrientationObserver];
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -83,7 +87,7 @@
 }
 
 - (instancetype)initWithRotateView:(UIView *)rotateView containerView:(UIView *)containerView {
-    if ([self init]) {
+    if (self = [super init]) {
         _roateType = ZFRotateTypeNormal;
         _view = rotateView;
         _containerView = containerView;
@@ -102,10 +106,6 @@
     self.roateType = ZFRotateTypeCellSmall;
     self.view = rotateView;
     self.containerView = containerView;
-}
-
-- (void)dealloc {
-    [self removeDeviceOrientationObserver];
 }
 
 - (void)addDeviceOrientationObserver {
@@ -173,8 +173,11 @@
             self.fullScreen = YES;
         } else {
             if (!self.fullScreen) return;
-            if (self.roateType == ZFRotateTypeCell) superview = [self.cell viewWithTag:self.playerViewTag];
-            else superview = self.containerView;
+            if (self.roateType == ZFRotateTypeCell) {
+                superview = [self.cell viewWithTag:self.playerViewTag];
+            } else {
+                superview = self.containerView;
+            }
             self.fullScreen = NO;
         }
         if (self.orientationWillChange) self.orientationWillChange(self, self.isFullScreen);
@@ -200,8 +203,11 @@
     }else if (self.isFullScreen) {
         superview = self.fullScreenContainerView;
     }else {
-        if (self.roateType == ZFRotateTypeCell) superview = [self.cell viewWithTag:self.playerViewTag];
-        else superview = self.containerView;
+        if (self.roateType == ZFRotateTypeCell) {
+            superview = [self.cell viewWithTag:self.playerViewTag];
+        } else {
+            superview = self.containerView;
+        }
         self.fullScreen = NO;
     }
     frame = [superview convertRect:superview.bounds toView:self.fullScreenContainerView];

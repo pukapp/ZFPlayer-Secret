@@ -205,19 +205,18 @@ static NSString *const kPresentationSize         = @"presentationSize";
 - (UIImage *)thumbnailImageAtCurrentTime {
     AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:_asset];
     CMTime expectedTime = _playerItem.currentTime;
-    CGImageRef cgImage = NULL;
-    
+
     imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
     imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
-    cgImage = [imageGenerator copyCGImageAtTime:expectedTime actualTime:NULL error:NULL];
+    CGImageRef cgImage = [imageGenerator copyCGImageAtTime:expectedTime actualTime:NULL error:NULL];
     
     if (!cgImage) {
         imageGenerator.requestedTimeToleranceBefore = kCMTimePositiveInfinity;
         imageGenerator.requestedTimeToleranceAfter = kCMTimePositiveInfinity;
         cgImage = [imageGenerator copyCGImageAtTime:expectedTime actualTime:NULL error:NULL];
     }
-    
-    UIImage *image = [UIImage imageWithCGImage:cgImage];
+    UIImage * image = [UIImage imageWithCGImage:cgImage];
+    CGImageRelease(cgImage);
     return image;
 }
 
@@ -411,7 +410,9 @@ static NSString *const kPresentationSize         = @"presentationSize";
 
 - (UIView *)view {
     if (!_view) {
-        _view = [[ZFPlayerPresentView alloc] init];
+        ZFPlayerPresentView * view = [[ZFPlayerPresentView alloc] init];
+        __weak typeof(view)weakView = view;
+        _view = weakView;
         _view.backgroundColor = [UIColor blackColor];
         _view.hidden = YES;
     }

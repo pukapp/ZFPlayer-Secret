@@ -234,12 +234,10 @@
     [session invalidateAndCancel];
 }
 
-
 - (void)dealloc
 {
     [task cancel];
 //    [_operateQueue cancelAllOperations];
-   
 }
 
 

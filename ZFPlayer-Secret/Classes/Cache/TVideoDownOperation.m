@@ -34,7 +34,6 @@
 
 - (instancetype)initWithUrl:(NSURL *)url withRange:(NSRange)range {
     self = [super init];
-
     _range = range;
     _executing = NO;
     _finished = NO;
@@ -243,8 +242,4 @@
     [self done];
 }
 
-- (void)dealloc
-{
-//    NSLog(@"nsoperation dealloc %@",self);
-}
 @end

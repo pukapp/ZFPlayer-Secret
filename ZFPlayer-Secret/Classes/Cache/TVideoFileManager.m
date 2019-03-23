@@ -23,6 +23,12 @@ static NSString* VideoCachePath = nil;
     __block  os_unfair_lock oslock;
 }
  pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
+
+- (void)dealloc {
+    [_writeFileHandle closeFile];
+    [_readFileHandle closeFile];
+}
+
 - (instancetype)initWithFileName:(NSString*)fileName
 {
     self = [super init];
@@ -142,13 +148,6 @@ static NSString* VideoCachePath = nil;
     return [_readFileHandle readDataToEndOfFile];
 }
 
-
-- (void)dealloc
-{
-    [_writeFileHandle closeFile];
-    [_readFileHandle closeFile];
-}
-
 #pragma mark------cache append 、subRange
 
 - (void)saveSegmentData:(NSUInteger)offset length:(NSUInteger)length
@@ -184,7 +183,6 @@ static NSString* VideoCachePath = nil;
             
             NSArray* insertArr = @[start,end];
             if (startIndex<0) {
-                startIndex = 0;
                 [_segmentArr insertObject:insertArr atIndex:0];
             }
             else

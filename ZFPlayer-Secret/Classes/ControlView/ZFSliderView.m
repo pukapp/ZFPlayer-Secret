@@ -79,13 +79,6 @@ static const CGFloat kAnimate = 0.3;
     return self;
 }
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    self.allowTapped = YES;
-    self.animate = YES;
-    [self addSubViews];
-}
-
 - (void)layoutSubviews {
     [super layoutSubviews];
     

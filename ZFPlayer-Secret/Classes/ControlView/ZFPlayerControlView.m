@@ -41,7 +41,7 @@
 static const CGFloat ZFPlayerAnimationTimeInterval              = 2.5f;
 static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
 
-@interface ZFPlayerControlView () <ZFSliderViewDelegate>
+@interface ZFPlayerControlView ()
 /// 竖屏控制层的View
 @property (nonatomic, strong) ZFPortraitControlView *portraitControlView;
 /// 横屏控制层的View
@@ -81,7 +81,10 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
 
 @implementation ZFPlayerControlView
 @synthesize player = _player;
-
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"AVSystemController_SystemVolumeDidChangeNotification" object:nil];
+    [self cancelAutoFadeOutControlView];
+}
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
@@ -105,8 +108,6 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
     CGFloat min_view_w = self.zf_width;
     CGFloat min_view_h = self.zf_height;
     
-    min_w = min_view_w;
-    min_h = min_view_h;
     self.portraitControlView.frame = self.bounds;
     self.landScapeControlView.frame = self.bounds;
     self.floatControlView.frame = self.bounds;
@@ -159,11 +160,6 @@ static const CGFloat ZFPlayerControlViewAutoFadeOutTimeInterval = 0.25f;
     self.volumeBrightnessView.frame = CGRectMake(min_x, min_y, min_w, min_h);
     self.volumeBrightnessView.center = self.center;
     
-}
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"AVSystemController_SystemVolumeDidChangeNotification" object:nil];
-    [self cancelAutoFadeOutControlView];
 }
 
 /// 添加所有子控件

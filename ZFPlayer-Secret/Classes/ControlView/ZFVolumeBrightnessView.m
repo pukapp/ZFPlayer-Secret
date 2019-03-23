@@ -41,7 +41,9 @@
 @end
 
 @implementation ZFVolumeBrightnessView
-
+- (void)dealloc {
+    [self removeSystemVolumeView];
+}
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
@@ -53,10 +55,6 @@
         [self hideTipView];
     }
     return self;
-}
-
-- (void)dealloc {
-    [self removeSystemVolumeView];
 }
 
 - (void)layoutSubviews {

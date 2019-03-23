@@ -44,6 +44,10 @@
 
 @implementation ZFPlayerController
 
+- (void)dealloc {
+    [self.currentPlayerManager stop];
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -73,10 +77,6 @@
     // Apps using this category don't mute when the phone's mute button is turned on, but play sound when the phone is silent
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
-}
-
-- (void)dealloc {
-    [self.currentPlayerManager stop];
 }
 
 + (instancetype)playerWithPlayerManager:(id<ZFPlayerMediaPlayback>)playerManager containerView:(nonnull UIView *)containerView {
@@ -868,6 +868,7 @@
         [self stopCurrentPlayingCell];
         UIView *cell = [self.scrollView zf_getCellForIndexPath:playingIndexPath];
         self.containerView = [cell viewWithTag:self.containerViewTag];
+        
 //        [self.orientationObserver cellModelRotateView:self.currentPlayerManager.view rotateViewAtCell:cell playerViewTag:self.containerViewTag];
 //        if (self.allowOrentitaionRotation) [self addDeviceOrientationObserver];
         self.scrollView.zf_playingIndexPath = playingIndexPath;
