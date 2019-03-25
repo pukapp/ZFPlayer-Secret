@@ -611,7 +611,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.secret.ZFPlayer_Secret;
+				PRODUCT_BUNDLE_IDENTIFIER = com.secret.ZFPlayerSecret;
 				PRODUCT_MODULE_NAME = ZFPlayer_Secret;
 				PRODUCT_NAME = ZFPlayer_Secret;
 				SKIP_INSTALL = YES;
@@ -638,7 +638,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.secret.ZFPlayer_Secret;
+				PRODUCT_BUNDLE_IDENTIFIER = com.secret.ZFPlayerSecret;
 				PRODUCT_MODULE_NAME = ZFPlayer_Secret;
 				PRODUCT_NAME = ZFPlayer_Secret;
 				SKIP_INSTALL = YES;
